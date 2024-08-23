@@ -10,9 +10,17 @@ Follow these steps to set up the project locally:
 
 ```bash
 git clone https://github.com/your-username/athlete-management.git
+```
 
+### 2. CD Into Directory
+```bash
 cd athlete-management
+```
 
+### 3. Install Dependencies
+```bash
 npm install
-
+```
+```bash
 npm install pnpm
+```
