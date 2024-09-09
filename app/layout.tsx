@@ -19,13 +19,13 @@ export default function RootLayout({
       </head>
       <UserProvider>
         <body>
-          <NavHeader></NavHeader>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
+            <NavHeader></NavHeader>
             {children}
           </ThemeProvider>
         </body>
