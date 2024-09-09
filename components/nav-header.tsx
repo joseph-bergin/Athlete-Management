@@ -35,14 +35,14 @@ const Menu = () => (
                     <NavigationMenuTrigger>Team Tools</NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="grid gap-3 p-4 md:w-[200px] lg:w-[300px]">
-                            <ListItem title="Team Manager" children="View and manage your team." href="/"></ListItem>
-                            <ListItem title="Performance Analytics" children="Tools to help track athlete performance." href="/"></ListItem>
+                            <ListItem title="Team Manager" children="View and manage your team." href="/dashboard/team"></ListItem>
+                            <ListItem title="Performance Analytics" children="Tools to help track athlete performance." href="/dashboard/performance"></ListItem>
                         </ul>
                     </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                        <a href="/">Profile</a>
+                        <a href="/profile">Profile</a>
                     </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>

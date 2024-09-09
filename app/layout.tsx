@@ -1,3 +1,4 @@
+import { NavHeader } from '@/components/nav-header';
 import './global.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { UserProvider } from '@auth0/nextjs-auth0/client'
@@ -18,6 +19,7 @@ export default function RootLayout({
       </head>
       <UserProvider>
         <body>
+          <NavHeader></NavHeader>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
