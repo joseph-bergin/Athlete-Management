@@ -2,3 +2,4 @@ numpy==1.24.3
 Flask==3.0.3
 supabase
 python-dotenv
+flask-cors

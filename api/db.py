@@ -1,7 +1,7 @@
-from flask import current_app
+import os
 from supabase import create_client
 
 def get_supabase_client():
-    url = current_app.config['SUPABASE_URL']
-    key = current_app.config['SUPABASE_KEY']
+    url = os.getenv('SUPABASE_URL')
+    key = os.getenv('SUPABASE_KEY')
     return create_client(url, key)
