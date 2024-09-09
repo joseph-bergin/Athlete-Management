@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 export function HeroSection() {
     return (<>
         {/* Hero */}
-        <div className="relative overflow-hidden py-24 lg:py-32">
+        <div className="relative overflow-hidden py-24 lg:py-32 z-0">
             {/* Gradients */}
             <div
                 aria-hidden="true"

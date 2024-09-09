@@ -1,4 +1,5 @@
 import './global.css';
+import { ThemeProvider } from '@/components/theme-provider';
 import { UserProvider } from '@auth0/nextjs-auth0/client'
 
 export const metadata = {
@@ -16,7 +17,16 @@ export default function RootLayout({
       <head>
       </head>
       <UserProvider>
-        <body>{children}</body>
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </UserProvider>
     </html>
   )
