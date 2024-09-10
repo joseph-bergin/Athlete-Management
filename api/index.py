@@ -18,6 +18,8 @@ def index():
     print("test")
     return jsonify(response.data)
 
+#----------------- User Table Enpoints -----------------#
+
 # Insert user in user table
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -70,6 +72,63 @@ def delete_user_by_id(user_id):
     
     return jsonify({'message': f'User with id {user_id} successfully deleted'}), 200
 
+#------------------------------------------------------------------------------------------#
+
+#----------------- Team Table Enpoints -----------------#
+
+# Insert team in team table
+@app.route('/teams', methods=['POST'])
+def create_team():
+    data = request.json
+    response = supabase.table('Team').insert(data).execute()
+
+    if response.data is None:
+        return jsonify({'error': 'Failed to create team'}), 400
+    
+    return jsonify(response.data), 201
+
+# Get all teams in table
+@app.route('/teams', methods=['GET'])
+def get_teams():
+    response = supabase.table('Team').select('*').execute()
+
+    if response.data is None:
+        return jsonify({'error': 'Failed to fetch teams'}), 400
+    
+    return jsonify(response.data), 200
+
+# Get single team by teamID
+@app.route('/teams/<team_id>', methods=['GET'])
+def get_team_by_id(team_id):
+    response = supabase.table('Team').select('*').eq('teamID', team_id).execute()
+    
+    if response.data is None:
+        return jsonify({'error': f'Team with id {team_id} not found'}), 404
+    
+    return jsonify(response.data[0]), 200
+
+# Update single team by teamID
+@app.route('/teams/<team_id>', methods=['PUT'])
+def update_team_by_id(team_id):
+    data = request.json
+    response = supabase.table('Team').update(data).eq('teamID', team_id).execute()
+    
+    if response.data is None:
+        return jsonify({'error': f'Failed to update team with id {team_id}'}), 400
+    
+    return jsonify(response.data), 200
+
+# Delete a single team by teamID
+@app.route('/teams/<team_id>', methods=['DELETE'])
+def delete_team_by_id(team_id):
+    response = supabase.table('Team').delete().eq('teamID', team_id).execute()
+    
+    if response.data is None:
+        return jsonify({'error': f'Failed to delete team with id {team_id}'}), 400
+    
+    return jsonify({'message': f'Team with id {team_id} successfully deleted'}), 200
+
+#------------------------------------------------------------------------------------------#
 
 if __name__ == "__main__":
     app.run(debug=True)
