@@ -19,3 +19,6 @@
 -- Create Position table 
 \i create_position_table.sql
 
+-- Create Catapult Data table 
+\i create_catapultdata_table.sql
+
