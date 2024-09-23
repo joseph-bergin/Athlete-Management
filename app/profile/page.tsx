@@ -9,8 +9,6 @@ export default function Profile() {
   const [profile, setProfile] = useState({
     firstName: 'John',
     lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
   })
 
   const updateProfile = (newData) => {
