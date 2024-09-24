@@ -5,13 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import PersonalInfo from '../../components/personal-info'
 import ProfileActions from '../../components/profile-actions'
 
+export interface Profile {
+  firstName: string;
+  lastName: string;
+}
+
 export default function Profile() {
   const [profile, setProfile] = useState({
     firstName: 'John',
     lastName: 'Doe',
   })
 
-  const updateProfile = (newData) => {
+  const updateProfile = (newData: Profile) => {
     setProfile(prev => ({ ...prev, ...newData }))
   }
 
