@@ -5,3 +5,4 @@ export default withMiddlewareAuthRequired();
 export const config = {
   matcher: ['/dashboard/:page*'],
 };
+

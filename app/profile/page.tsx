@@ -21,10 +21,10 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center text-gray-900">User Profile</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center">User Profile</CardTitle>
         </CardHeader>
         <CardContent className="mt-6 space-y-8">
           <PersonalInfo 

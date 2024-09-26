@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PencilIcon, CheckIcon } from 'lucide-react'
 
-export default function PersonalInfo({ firstName, lastName, updateProfile }) {
+interface PersonalInfoProps {
+  firstName: string;
+  lastName: string;
+  updateProfile: (profile: { firstName: string; lastName: string }) => void;
+}
+
+export default function PersonalInfo({ firstName, lastName, updateProfile }: PersonalInfoProps) {
   const [editing, setEditing] = useState(false)
   const [tempFirstName, setTempFirstName] = useState(firstName)
   const [tempLastName, setTempLastName] = useState(lastName)
@@ -20,7 +26,7 @@ export default function PersonalInfo({ firstName, lastName, updateProfile }) {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+        <h2 className="text-xl font-semibold">Personal Information</h2>
         <Button 
           variant="ghost" 
           size="sm" 
@@ -46,7 +52,7 @@ export default function PersonalInfo({ firstName, lastName, updateProfile }) {
           />
         </div>
       ) : (
-        <p className="text-gray-700">{firstName} {lastName}</p>
+        <p>{firstName} {lastName}</p>
       )}
     </div>
   )
