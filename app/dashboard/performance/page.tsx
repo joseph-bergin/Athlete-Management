@@ -1,9 +1,18 @@
 'use client'
 import React, { useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
-import 'chart.js/auto';  
+import 'chart.js/auto'; 
+import
+{
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel
+} from '@/components/ui/dropdown-menu'
 
 export default function Performance() {
+    const [selectedChart, setSelectedChart] = useState('bar');
     
     const [athleteData] = useState([
         { player_load: 1, explosive_yards: 30, total_distance: 500, max_velocity: 9.5 },
@@ -45,15 +54,36 @@ export default function Performance() {
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-2xl font-bold mb-8 text-center">Athlete Performance Charts</h1>
+            <DropdownMenu>
+                <DropdownMenuTrigger className="mb-4">
+                    Select Chart
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>
+                        Select a chart:
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => setSelectedChart('bar')}>
+                        Bar Chart
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSelectedChart('line')}>
+                        Line Chart
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
             
             <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4">Explosive Yards vs Total Distance (Bar Chart)</h2>
-                <Bar data={barData} />
-            </div>
-
-            <div>
-                <h2 className="text-xl font-semibold mb-4">Max Velocity (Line Chart)</h2>
-                <Line data={lineData} />
+                {selectedChart === 'bar' && (
+                    <>
+                        <h2 className="text-xl font-semibold mb-4">Explosive Yards vs Total Distance (Bar Chart)</h2>
+                        <Bar data={barData} />
+                    </>
+                )}
+                {selectedChart === 'line' &&(
+                    <>
+                    <h2 className="text-xl font-semibold mb-4">Max Velocity (Line Chart)</h2>
+                    <Line data={lineData} />
+                    </>
+                )}
             </div>
         </div>
     );
