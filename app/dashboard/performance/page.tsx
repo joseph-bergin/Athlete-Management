@@ -1,8 +1,60 @@
+'use client'
+import React, { useState } from 'react';
+import { Bar, Line } from 'react-chartjs-2';
+import 'chart.js/auto';  
+
 export default function Performance() {
+    
+    const [athleteData] = useState([
+        { player_load: 1, explosive_yards: 30, total_distance: 500, max_velocity: 9.5 },
+        { player_load: 2, explosive_yards: 35, total_distance: 550, max_velocity: 9.8 },
+        { player_load: 3, explosive_yards: 40, total_distance: 600, max_velocity: 10.1 },
+        { player_load: 4, explosive_yards: 28, total_distance: 520, max_velocity: 9.6 },
+        { player_load: 5, explosive_yards: 38, total_distance: 570, max_velocity: 9.9 },
+    ]);
+
+    
+    const barData = {
+        labels: athleteData.map((item) => `Player ${item.player_load}`),
+        datasets: [
+            {
+                label: 'Explosive Yards',
+                data: athleteData.map((item) => item.explosive_yards),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            },
+            {
+                label: 'Total Distance',
+                data: athleteData.map((item) => item.total_distance),
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+            },
+        ],
+    };
+
+    const lineData = {
+        labels: athleteData.map((item) => `Player ${item.player_load}`),
+        datasets: [
+            {
+                label: 'Max Velocity',
+                data: athleteData.map((item) => item.max_velocity),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                fill: false,
+            },
+        ],
+    };
+
     return (
-        <div>
-            <p>Performance Page</p>
-            <iframe width="600" height="450" src="https://lookerstudio.google.com/embed/reporting/9dbdbb4c-e522-4598-a40c-b81fb3d21983/page/M1rCE" allowFullScreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+        <div className="container mx-auto p-8">
+            <h1 className="text-2xl font-bold mb-8 text-center">Athlete Performance Charts</h1>
+            
+            <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Explosive Yards vs Total Distance (Bar Chart)</h2>
+                <Bar data={barData} />
+            </div>
+
+            <div>
+                <h2 className="text-xl font-semibold mb-4">Max Velocity (Line Chart)</h2>
+                <Line data={lineData} />
+            </div>
         </div>
-    )
+    );
 }
