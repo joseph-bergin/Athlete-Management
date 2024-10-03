@@ -12,7 +12,7 @@ def get_catapult_data():
 
 @catapult_data_blueprint.route('/catapult_data/<int:data_id>', methods=['GET'])
 def get_catapult_data_by_id(data_id):
-    response = supabase.table('catapultdata').select('*').eq('id', data_id).execute()
+    response = supabase.table('catapultdata').select('*').eq('catapultDataID', data_id).execute()
     catapult_data = response.data[0] if response.data else None
     if catapult_data:
         return jsonify(catapult_data), 200

@@ -1,5 +1,6 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import axios from 'axios';
 import { Bar, Line } from 'react-chartjs-2';
 import 'chart.js/auto'; 
 import
@@ -14,37 +15,41 @@ import
 export default function Performance() {
     const [selectedChart, setSelectedChart] = useState('bar');
     
-    const [athleteData] = useState([
-        { player_load: 1, explosive_yards: 30, total_distance: 500, max_velocity: 9.5 },
-        { player_load: 2, explosive_yards: 35, total_distance: 550, max_velocity: 9.8 },
-        { player_load: 3, explosive_yards: 40, total_distance: 600, max_velocity: 10.1 },
-        { player_load: 4, explosive_yards: 28, total_distance: 520, max_velocity: 9.6 },
-        { player_load: 5, explosive_yards: 38, total_distance: 570, max_velocity: 9.9 },
-    ]);
+    const [athleteData, setAthleteData] = useState<any>([]);
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:5000/api/ws/catapult_data/3')
+            .then(response => {
+                console.log(response.data);
+                setAthleteData(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching athlete data: ", error);
+            });
+    }, []);
 
     
     const barData = {
-        labels: athleteData.map((item) => `Player ${item.player_load}`),
+        labels: ['Explosive Yards', 'Total Distance', 'Player Load'],
         datasets: [
             {
-                label: 'Explosive Yards',
-                data: athleteData.map((item) => item.explosive_yards),
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            },
-            {
-                label: 'Total Distance',
-                data: athleteData.map((item) => item.total_distance),
-                backgroundColor: 'rgba(153, 102, 255, 0.6)',
-            },
+                label: `Athlete ${athleteData.athleteID}`,
+                data: [
+                    athleteData.explosiveYards,
+                    athleteData.totalDistance,
+                    athleteData.totalPlayerLoad
+                ],
+                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+            }
         ],
     };
 
     const lineData = {
-        labels: athleteData.map((item) => `Player ${item.player_load}`),
+        labels: ['Max Velocity'],  
         datasets: [
             {
-                label: 'Max Velocity',
-                data: athleteData.map((item) => item.max_velocity),
+                label: `Athlete ${athleteData.athleteID} - Max Velocity`,
+                data: [athleteData.maximumVelocity], 
                 borderColor: 'rgba(255, 99, 132, 1)',
                 fill: false,
             },
