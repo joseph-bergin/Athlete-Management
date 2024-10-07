@@ -4,3 +4,4 @@ supabase
 python-dotenv
 flask-cors
 React
+XLSX
