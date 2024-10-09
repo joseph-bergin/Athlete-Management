@@ -13,7 +13,12 @@ def get_users():
 @user_blueprint.route('/users/<auth_id>', methods=['GET'])
 def get_user_by_auth_id(auth_id):
     response = supabase.table('User').select('*').eq('authId', auth_id).execute()
-    user = response.data[0] if response.data else {}
+    
+    if response.data:
+        user = response.data[0] 
+    else: 
+        return jsonify({'error': 'User not found'}), 404
+    
     return jsonify(user), 200
 
 @user_blueprint.route('/users', methods=['POST'])
