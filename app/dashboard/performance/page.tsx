@@ -58,7 +58,7 @@ function Performance() {
         data
       );
 
-      if (response.status == 200) {
+      if (response.status == 201) {
         console.log("Data uploaded successfully!");
       } else {
         console.error("Failed to upload data.");
