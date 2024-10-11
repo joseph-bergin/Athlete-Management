@@ -1,95 +1,82 @@
 'use client'
 import React, { useState, useEffect} from 'react';
 import axios from 'axios';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line} from 'react-chartjs-2';
 import 'chart.js/auto'; 
 import
-{
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel
-} from '@/components/ui/dropdown-menu'
+{DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel} from '@/components/ui/dropdown-menu'
 
 export default function Performance() {
-    const [selectedChart, setSelectedChart] = useState('bar');
-    
-    const [athleteData, setAthleteData] = useState<any>([]);
+    const [athletes, setAthletes] = useState<any[]>([]);
+    const [selectedAthlete, setSelectedAthlete] = useState<string | null>(null);
+    const [athleteData, setAthleteData] = useState<any[]>([]);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:5000/api/ws/catapult_data/3')
-            .then(response => {
-                console.log(response.data);
-                setAthleteData(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching athlete data: ", error);
-            });
+        setIsMounted(true);
     }, []);
 
-    
-    const barData = {
-        labels: ['Explosive Yards', 'Total Distance', 'Player Load'],
-        datasets: [
-            {
-                label: `Athlete ${athleteData.athleteID}`,
-                data: [
-                    athleteData.explosiveYards,
-                    athleteData.totalDistance,
-                    athleteData.totalPlayerLoad
-                ],
-                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
-            }
-        ],
+    useEffect(() => {
+        if (isMounted) {
+            axios.get('http://127.0.0.1:5000/api/ws/athletes')
+                .then(response => setAthletes(response.data))
+                .catch(error => console.error('Error fetching athletes:', error));
+        }
+    }, [isMounted]);
+
+    const handleAthleteSelection = (athleteID: number, first_name: string, last_name: string) => {
+        setSelectedAthlete(`${first_name} ${last_name}`);
+        
+        axios.get(`http://127.0.0.1:5000/api/ws/catapult_data/athlete/${athleteID}`)
+            .then(response => { 
+                setAthleteData(response.data); 
+            })
+            .catch(error => console.error('Error fetching performance data:', error));
     };
 
-    const lineData = {
-        labels: ['Max Velocity'],  
-        datasets: [
-            {
-                label: `Athlete ${athleteData.athleteID} - Max Velocity`,
-                data: [athleteData.maximumVelocity], 
-                borderColor: 'rgba(255, 99, 132, 1)',
-                fill: false,
-            },
-        ],
-    };
+    if (!isMounted) {
+        return null; 
+    }
 
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-8 text-center">Athlete Performance Charts</h1>
+            <h1 className="text-2xl font-bold mb-8 text-center">Performance Dashboard</h1>
+
             <DropdownMenu>
                 <DropdownMenuTrigger className="mb-4">
-                    Select Chart
+                    <button className="p-2 border">Select Athlete</button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuLabel>
-                        Select a chart:
-                    </DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => setSelectedChart('bar')}>
-                        Bar Chart
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSelectedChart('line')}>
-                        Line Chart
-                    </DropdownMenuItem>
+                    {athletes.map(athlete => (
+                        <DropdownMenuItem 
+                            key={athlete.athleteID} 
+                            onClick={() => handleAthleteSelection(athlete.athleteID, athlete.first_name, athlete.last_name)} 
+                        >
+                            {athlete.first_name && athlete.last_name 
+                                ? `${athlete.first_name} ${athlete.last_name}` 
+                                : `Athlete ${athlete.athleteID}`}
+                        </DropdownMenuItem>
+                    ))}
                 </DropdownMenuContent>
             </DropdownMenu>
             
-            <div className="mb-8">
-                {selectedChart === 'bar' && (
-                    <>
-                        <h2 className="text-xl font-semibold mb-4">Explosive Yards vs Total Distance (Bar Chart)</h2>
-                        <Bar data={barData} />
-                    </>
-                )}
-                {selectedChart === 'line' &&(
-                    <>
-                    <h2 className="text-xl font-semibold mb-4">Max Velocity (Line Chart)</h2>
-                    <Line data={lineData} />
-                    </>
-                )}
-            </div>
+            {athleteData.length > 0 && (
+                <div>
+                    <h2 className="text-xl font-bold mt-8">{selectedAthlete && <p>Athlete: {selectedAthlete}</p>}</h2>
+                    
+                    <Line data={{
+                        labels: athleteData.map(item => item.dataDate), 
+                        datasets: [{
+                            label: 'Maximum Velocity',
+                            data: athleteData.map(item => item.maximumVelocity),
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            fill: false,
+                        }],
+                    }} />
+                </div>
+            )}
+            
         </div>
     );
 }
+

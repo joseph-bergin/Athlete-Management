@@ -19,6 +19,15 @@ def get_catapult_data_by_id(data_id):
     else:
         return jsonify({'error': 'Data not found'}), 404
 
+@catapult_data_blueprint.route('/catapult_data/athlete/<int:athlete_id>', methods=['GET'])
+def get_catapult_data_by_athlete_id(athlete_id):
+    response = supabase.table('catapultdata').select('*').eq('athleteID', athlete_id).execute()
+
+    if not response.data:
+        return jsonify({"error": "No data found for this athlete"}), 404
+
+    return jsonify(response.data), 200
+
 @catapult_data_blueprint.route('/catapult_data', methods=['POST'])
 def create_catapult_data():
     new_data = request.json
