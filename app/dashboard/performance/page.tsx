@@ -5,6 +5,8 @@ import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import { Line} from 'react-chartjs-2';
 import 'chart.js/auto'; 
+import { Button } from "@/components/ui/button"
+import { Upload, ChevronDown } from 'lucide-react'
 import
 {DropdownMenu,DropdownMenuTrigger,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel} from '@/components/ui/dropdown-menu'
 
@@ -100,49 +102,164 @@ export default function Performance() {
         console.error("Error:", error);
       }
     };
+    const sortedAthleteData = [...athleteData].sort((a, b) => new Date(a.dataDate).getTime() - new Date(b.dataDate).getTime());
 
     return (
-        <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-8 text-center">Performance Dashboard</h1>
-            <div>
-              <input type="file" accept=".csv" onChange={handleFileUpload} />
-            </div>
-
-            <DropdownMenu>
-                <DropdownMenuTrigger className="mb-4">
-                    <button className="p-2 border">Select Athlete</button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    {athletes.map(athlete => (
-                        <DropdownMenuItem 
-                            key={athlete.athleteID} 
-                            onClick={() => handleAthleteSelection(athlete.athleteID, athlete.first_name, athlete.last_name)} 
-                        >
-                            {athlete.first_name && athlete.last_name 
-                                ? `${athlete.first_name} ${athlete.last_name}` 
-                                : `Athlete ${athlete.athleteID}`}
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-            
-            {athleteData.length > 0 && (
-                <div>
-                    <h2 className="text-xl font-bold mt-8">{selectedAthlete && <p>Athlete: {selectedAthlete}</p>}</h2>
-                    
-                    <Line data={{
-                        labels: athleteData.map(item => item.dataDate), 
-                        datasets: [{
-                            label: 'Maximum Velocity',
-                            data: athleteData.map(item => item.maximumVelocity),
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            fill: false,
-                        }],
-                    }} />
-                </div>
-            )}
-            
+      <div className="container mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-8 text-center">Performance Dashboard</h1>
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+        <div className="w-full sm:w-auto">
+          <Button variant="outline" className="w-full" onClick={() => document.getElementById('file-upload')?.click()}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload CSV
+          </Button>
+          <input
+            id="file-upload"
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full sm:w-auto">
+              {selectedAthlete || 'Select Athlete'}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Athletes</DropdownMenuLabel>
+            {athletes.map(athlete => (
+              <DropdownMenuItem 
+                key={athlete.athleteID} 
+                onClick={() => handleAthleteSelection(athlete.athleteID, athlete.first_name, athlete.last_name)}
+              >
+                {athlete.first_name && athlete.last_name 
+                  ? `${athlete.first_name} ${athlete.last_name}` 
+                  : `Athlete ${athlete.athleteID}`}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {sortedAthleteData.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+              <div className="col-span-2">
+                  <h2 className="text-xl font-bold mb-4">{selectedAthlete && <p>Athlete: {selectedAthlete}</p>}</h2>
+              </div>
+
+              {/* Total Player Load Graph */}
+              <div>
+                  <h3>Total Player Load</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Total Player Load',
+                                  data: sortedAthleteData.map(item => item.totalPlayerLoad),
+                                  borderColor: 'rgba(54, 162, 235, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+
+              {/* Player Load Per Minute Graph */}
+              <div>
+                  <h3>Player Load Per Minute</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Player Load Per Minute',
+                                  data: sortedAthleteData.map(item => item.playerLoadPerMin),
+                                  borderColor: 'rgba(255, 206, 86, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+
+              {/* Maximum Velocity Graph */}
+              <div>
+                  <h3>Maximum Velocity</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Maximum Velocity',
+                                  data: sortedAthleteData.map(item => item.maximumVelocity),
+                                  borderColor: 'rgba(255, 99, 132, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+
+              {/* Explosive Yardage Graph */}
+              <div>
+                  <h3>Explosive Yardage</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Explosive Yardage',
+                                  data: sortedAthleteData.map(item => item.explosiveYards),
+                                  borderColor: 'rgba(75, 192, 192, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+
+              {/* Total Distance Graph */}
+              <div>
+                  <h3>Total Distance</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Total Distance',
+                                  data: sortedAthleteData.map(item => item.totalDistance),
+                                  borderColor: 'rgba(255, 159, 64, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+
+              {/* Total High IMA Graph */}
+              <div>
+                  <h3>Total High IMA</h3>
+                  <Line
+                      data={{
+                          labels: sortedAthleteData.map(item => item.dataDate),
+                          datasets: [
+                              {
+                                  label: 'Total High IMA',
+                                  data: sortedAthleteData.map(item => item.totalHighIMA),
+                                  borderColor: 'rgba(255, 206, 86, 1)',
+                                  fill: false,
+                              },
+                          ],
+                      }}
+                  />
+              </div>
+          </div>
+      )}
+  </div>
     );
 }
 
