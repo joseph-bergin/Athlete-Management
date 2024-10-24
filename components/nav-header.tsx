@@ -79,7 +79,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, select
         <DropdownMenuContent>
             <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
             {teams.map((team) => (
-                    <DropdownMenuItem className="hover:cursor-pointer" onClick={() => selectTeam(team)}>{team.teamName}</DropdownMenuItem>
+                    <DropdownMenuItem key={team.teamID} className="hover:cursor-pointer" onClick={() => selectTeam(team)}>{team.teamName}</DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem className="hover:cursor-pointer"><CirclePlus className="inline mr-2" /> Create Team</DropdownMenuItem>
