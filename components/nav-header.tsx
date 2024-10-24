@@ -55,14 +55,38 @@ const Menu = () => (
     </div>
 )
 
+const TeamSelector = () => (
+    <div>
+        <NavigationMenu className="border border-solid border-primary rounded-md">
+            <NavigationMenuList>
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger>Select Team</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                        <ul className="grid gap-3 p-4 md:w-[200px] lg:w-[300px]">
+                            <ListItem title="Team Manager"></ListItem>
+                            <ListItem title="Performance Analytics"></ListItem>
+                        </ul>
+                    </NavigationMenuContent>
+                </NavigationMenuItem>
+            </NavigationMenuList>
+        </NavigationMenu>
+    </div>
+)
 
 export function NavHeader() {
     const { user, error, isLoading } = useUser();
+    const [teams, setTeam] = React.useState();
+    const [selectedTeam, setSelectedTeam] = React.useState();
 
     return (
         <>
-            <div className="grid grid-cols-2 grid-rows-1 py-4 justify-items-center items-center z-50">
+            <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
                 <NavigationTitle></NavigationTitle>
+
+                <div>
+                    {user ? <TeamSelector></TeamSelector> : null}
+                </div>
+
                 <div className="flex items-center gap-2">
                     {user ? <Menu></Menu> : <LoginButton></LoginButton>}
                     <ModeToggle></ModeToggle>
