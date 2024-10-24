@@ -35,6 +35,13 @@ def update_user_by_id():
     user = response.data[0] if response.data else {}
     return jsonify(user), 200
 
+@user_blueprint.route('/user/auth', methods=['PUT'])
+def update_user_by_auth_id():
+    data = request.json
+    response = supabase.table('User').update(data).eq('authId', data['authId']).execute()
+    user = response.data[0] if response.data else {}
+    return jsonify(user), 200
+
 @user_blueprint.route('/users/<user_id>', methods=['DELETE'])
 def delete_user_by_id(user_id):
     response = supabase.table('User').delete().eq('userID', user_id).execute()
