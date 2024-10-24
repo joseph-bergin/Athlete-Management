@@ -12,7 +12,7 @@ import
 
 export interface AthleteData {
   Name: string;
-  //Date: Date; // Could also be a `Date` type depending on your handling
+  "Date": Date; // Could also be a `Date` type depending on your handling
   "Total Player Load": number;
   "Explosive Yardage (Total)": number;
   "Player Load Per Minute": number;
@@ -70,11 +70,11 @@ export default function Performance() {
         }
   
         const binaryStr = evt.target.result;
-        const workbook = XLSX.read(binaryStr, { type: "binary" });
+        const workbook = XLSX.read(binaryStr, { type: "binary", cellDates: true });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
   
-        const data: AthleteData[] = XLSX.utils.sheet_to_json<AthleteData>(sheet);
+        const data: AthleteData[] = XLSX.utils.sheet_to_json<AthleteData>(sheet, {dateNF: 'd"/"m"/"yyyy'});
   
         // Here you might want to check the structure of `data`
         console.log("Parsed Data: ", data);

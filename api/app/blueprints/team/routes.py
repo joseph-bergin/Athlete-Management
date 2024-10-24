@@ -34,3 +34,9 @@ def update_team_by_id(request):
 def delete_team_by_id(team_id):
     response = supabase.table('Team').delete().eq('teamID', team_id).execute()
     return jsonify(response.data), 200
+
+@team_blueprint.route('/teams/owner/<user_id>', methods=['GET'])
+def get_teams_by_owner_id(user_id):
+    response = supabase.table('Team').select('*').eq('teamOwnerID', user_id).execute()
+    teams = response.data if response.data else []
+    return jsonify(teams), 200

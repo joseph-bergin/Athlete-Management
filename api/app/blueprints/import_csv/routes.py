@@ -46,7 +46,7 @@ def upload_csv():
             # There is an extra space in the excel file for Total High IMA
             record = {
                 "athleteID": athlete_id,
-                # "dataDate": row.get("Date"),
+                "dataDate": row["Date"],
                 "totalPlayerLoad": row["Total Player Load"],
                 "explosiveYards": row["Explosive Yardage (Total)"],
                 "playerLoadPerMin": row["Player Load Per Minute"],
