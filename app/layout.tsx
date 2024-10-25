@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { TeamProvider } from '@/providers/team.provider';
 import { AppUserProvider } from '@/providers/app-user.provider';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata = {
   title: 'Athlete Management System',
@@ -31,6 +32,7 @@ export default function RootLayout({
               <TeamProvider>
                 <NavHeader></NavHeader>
                 {children}
+                <Toaster />
               </TeamProvider>
             </AppUserProvider>
           </ThemeProvider>

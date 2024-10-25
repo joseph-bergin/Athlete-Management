@@ -10,6 +10,7 @@ import { Upload, ChevronDown } from 'lucide-react'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from '@/components/ui/dropdown-menu'
 import { TeamContext } from "@/providers/team.provider";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export interface ParsedAthleteData {
   Name: string;
@@ -51,6 +52,7 @@ export default function Performance() {
   const [performanceData, setPerformanceData] = useState<CatapultData[]>([]);
   const [csvData, setCsvData] = useState<ParsedAthleteData[]>([]);
   const { selectedTeam } = useContext(TeamContext);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!!selectedTeam) {
@@ -114,11 +116,14 @@ export default function Performance() {
       if (response.status == 201) {
         console.log("Data uploaded successfully!");
         setCsvData(data);
+        toast({title: "Data uploaded successfully!", description: "Performance data has been uploaded successfully."});
       } else {
         console.error("Failed to upload data.");
+        toast({title: "Failed to upload data.", description: "An error occurred while uploading the performance data.", variant: "destructive"});
       }
     } catch (error) {
       console.error("Error:", error);
+      toast({title: "Failed to upload data.", description: "An error occurred while uploading the performance data.", variant: "destructive"});
     }
   };
 

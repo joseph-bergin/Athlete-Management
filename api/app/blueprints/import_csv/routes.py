@@ -13,7 +13,6 @@ def split_name(full_name):
 
 def get_or_create_athlete(athlete_data):
     # Step 1: Split the full name into first_name and last_name
-    print(athlete_data)
     first_name, last_name = split_name(athlete_data.get("Name"))
 
     # Step 2: Check if the athlete exists in the athlete table
@@ -52,12 +51,9 @@ def upload_csv():
                 "totalDistance": entry["Total Distance (y)"],
                 "maximumVelocity": entry["Maximum Velocity (mph)"]
             }
-            print("record done")
-            print(record)
 
             # Step 3: Insert the record into your main table
             response = supabase.table('catapultdata').insert(record).execute()
-            print(response)
 
         return jsonify({"message": "Data inserted successfully!"}), 201
 
