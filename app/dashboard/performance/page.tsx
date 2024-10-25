@@ -22,10 +22,15 @@ export interface ParsedAthleteData {
   "Maximum Velocity (mph)": number;
 }
 
+export type ParsedAthleteDataDTO = ParsedAthleteData & { teamID: number | undefined };
+
 export interface Athlete {
   athleteID: number;
+  teamID: number;
   first_name: string;
   last_name: string;
+  year: string;
+  position: string;
 }
 
 export interface CatapultData {
@@ -70,6 +75,11 @@ export default function Performance() {
       return;
     }
 
+    if(!selectedTeam) {
+      console.error("No team selected");
+      return;
+    }
+
     const file = e.target.files[0];
     const reader = new FileReader();
 
@@ -85,14 +95,15 @@ export default function Performance() {
       const sheet = workbook.Sheets[sheetName];
 
       const data: ParsedAthleteData[] = XLSX.utils.sheet_to_json<ParsedAthleteData>(sheet, { dateNF: 'd"/"m"/"yyyy' });
+      const dto: ParsedAthleteDataDTO[] = data.map(entry => ({ ...entry, teamID: selectedTeam ? selectedTeam.teamID : undefined }));
 
-      uploadCsvData(data);
+      uploadCsvData(dto);
     };
 
     reader.readAsBinaryString(file);
   };
 
-  const uploadCsvData = async (data: ParsedAthleteData[]) => {
+  const uploadCsvData = async (data: ParsedAthleteDataDTO[]) => {
     try {
       setLoading(true);
       const response = await axios.post("/api/ws/upload_csv",
