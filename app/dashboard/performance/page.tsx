@@ -159,7 +159,7 @@ export default function Performance() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto" disabled={!selectedPosition}>
               {selectedAthlete || 'Select Athlete'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
