@@ -22,7 +22,10 @@ export interface AthleteData {
 }
 
 export default function Performance() {
+    const [positions, setPositions] = useState<any[]>([]);
     const [athletes, setAthletes] = useState<any[]>([]);
+    const [filterdAthletes, setFilteredAthletes] = useState<any[]>([]);
+    const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
     const [selectedAthlete, setSelectedAthlete] = useState<string | null>(null);
     const [athleteData, setAthleteData] = useState<any[]>([]);
     const [isMounted, setIsMounted] = useState(false);
@@ -37,6 +40,10 @@ export default function Performance() {
             axios.get('http://127.0.0.1:5000/api/ws/athletes')
                 .then(response => setAthletes(response.data))
                 .catch(error => console.error('Error fetching athletes:', error));
+            
+            axios.get('http://127.0.0.1:5000/api/ws/positions')
+                .then(response => setPositions(response.data))
+                .catch(error => console.error('Error fetching positions:', error));
         }
     }, [isMounted]);
 
@@ -49,6 +56,13 @@ export default function Performance() {
             })
             .catch(error => console.error('Error fetching performance data:', error));
     };
+
+    const handlePositionSelection = (position_abbreviation: string) => {
+      setSelectedPosition(`${position_abbreviation}`);
+
+      const filteredAthletes = athletes.filter(athlete => athlete.position_abbreviation === position_abbreviation);
+      setFilteredAthletes(filteredAthletes);
+  };
 
     if (!isMounted) {
         return null; 
@@ -124,13 +138,35 @@ export default function Performance() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full sm:w-auto">
+              {selectedPosition || 'Select Position'}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Positions</DropdownMenuLabel>
+            {positions.map(position => (
+              <DropdownMenuItem 
+                key={position.abbreviation} 
+                onClick={() => handlePositionSelection(position.abbreviation)}
+              >
+                {position.abbreviation 
+                  ? `${position.abbreviation}` 
+                  : `Position ${position.positionName}`}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full sm:w-auto">
               {selectedAthlete || 'Select Athlete'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>Athletes</DropdownMenuLabel>
-            {athletes.map(athlete => (
+            {filterdAthletes.map(athlete => (
               <DropdownMenuItem 
                 key={athlete.athleteID} 
                 onClick={() => handleAthleteSelection(athlete.athleteID, athlete.first_name, athlete.last_name)}
