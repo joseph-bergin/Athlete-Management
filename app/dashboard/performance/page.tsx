@@ -21,15 +21,29 @@ export interface AthleteData {
   "Maximum Velocity (mph)": number;
 }
 
+const datasetOptions = {
+  "Total Player Load": { key: "totalPlayerLoad", color: 'rgba(54, 162, 235, 1)' },
+  "Player Load Per Minute": { key: "playerLoadPerMin", color: 'rgba(255, 206, 86, 1)' },
+  "Maximum Velocity": { key: "maximumVelocity", color: 'rgba(255, 99, 132, 1)' },
+  "Explosive Yardage": { key: "explosiveYards", color: 'rgba(75, 192, 192, 1)' },
+  "Total Distance": { key: "totalDistance", color: 'rgba(255, 159, 64, 1)' },
+  "Total High IMA": { key: "totalHighIMA", color: 'rgba(255, 206, 86, 1)' },
+};
+
 export default function Performance() {
     const [positions, setPositions] = useState<any[]>([]);
-    const [athletes, setAthletes] = useState<any[]>([]);
-    const [filterdAthletes, setFilteredAthletes] = useState<any[]>([]);
     const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
-    const [selectedAthlete, setSelectedAthlete] = useState<string | null>(null);
+
+    const [athletes, setAthletes] = useState<any[]>([]);
     const [athleteData, setAthleteData] = useState<any[]>([]);
+    const [selectedAthlete, setSelectedAthlete] = useState<string | null>(null);
+    const [filteredAthletes, setFilteredAthletes] = useState<any[]>([]);
+        
     const [isMounted, setIsMounted] = useState(false);
     const [csvData, setCsvData] = useState<AthleteData[]>([]);
+    
+    const [selectedDataset, setSelectedDataset] = useState<string>("Total Player Load");
+
 
     useEffect(() => {
         setIsMounted(true);
@@ -46,6 +60,8 @@ export default function Performance() {
                 .catch(error => console.error('Error fetching positions:', error));
         }
     }, [isMounted]);
+
+
 
     const handleAthleteSelection = (athleteID: number, first_name: string, last_name: string) => {
         setSelectedAthlete(`${first_name} ${last_name}`);
@@ -166,7 +182,7 @@ export default function Performance() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>Athletes</DropdownMenuLabel>
-            {filterdAthletes.map(athlete => (
+            {filteredAthletes.map(athlete => (
               <DropdownMenuItem 
                 key={athlete.athleteID} 
                 onClick={() => handleAthleteSelection(athlete.athleteID, athlete.first_name, athlete.last_name)}
