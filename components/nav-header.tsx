@@ -11,9 +11,19 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle
 } from "./ui/navigation-menu";
-import React from "react";
+import React, { useContext } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { ModeToggle } from "./theme-mode-toggle";
+import { Skeleton } from "@/components/ui/skeleton"
+import { TeamContext } from "@/providers/team.provider";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { ChevronDown, CirclePlus, Users } from "lucide-react";
+
+export interface Team {
+    teamID: number;
+    teamOwnerID: number;
+    teamName: string;
+}
 
 const NavigationTitle = () => (
     <div>
@@ -55,21 +65,71 @@ const Menu = () => (
     </div>
 )
 
+interface TeamSelectorProps {
+    teams: Team[];
+    selectedTeam: Team | undefined;
+    selectTeam: (Team: Team) => void;
+};
+
+const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => (
+    <DropdownMenu>
+        <DropdownMenuTrigger>
+            <Button variant={"outline"}>{!!selectedTeam ? selectedTeam.teamName : 'Select Team'} <ChevronDown className="inline ml-2" /></Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+            <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
+            {teams.map((team) => (
+                    <DropdownMenuItem key={team.teamID} className="hover:cursor-pointer" onClick={() => selectTeam(team)}>{team.teamName}</DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="hover:cursor-pointer"><CirclePlus className="inline mr-2" /> Create Team</DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
+);
 
 export function NavHeader() {
     const { user, error, isLoading } = useUser();
+    const teamContext = useContext(TeamContext);
 
-    return (
-        <>
-            <div className="grid grid-cols-2 grid-rows-1 py-4 justify-items-center items-center z-50">
+    if(isLoading) {
+        return (
+            <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
                 <NavigationTitle></NavigationTitle>
-                <div className="flex items-center gap-2">
-                    {user ? <Menu></Menu> : <LoginButton></LoginButton>}
-                    <ModeToggle></ModeToggle>
-                </div>
+
+                <Skeleton className="col-span-2 h-8 w-8/12"></Skeleton>
             </div>
-        </>
-    )
+        )
+    }
+
+    if(user) {
+        return (
+            <>
+                <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
+                    <NavigationTitle></NavigationTitle>
+    
+                    <TeamSelector teams={teamContext.teams} selectedTeam={teamContext.selectedTeam} selectTeam={teamContext.selectTeam}></TeamSelector>
+    
+                    <div className="flex items-center gap-2">
+                        <Menu></Menu>
+                        <ModeToggle></ModeToggle>
+                    </div>
+                </div>
+            </>
+        )
+    } else {
+        return (
+            <>
+                <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
+                    <NavigationTitle></NavigationTitle>
+                    <div></div>
+                    <div className="flex items-center gap-2">
+                        <LoginButton></LoginButton>
+                        <ModeToggle></ModeToggle>
+                    </div>
+                </div>
+            </>
+        )
+    }
 }
 
 const ListItem = React.forwardRef<
