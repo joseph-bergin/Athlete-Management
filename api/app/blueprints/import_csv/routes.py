@@ -39,6 +39,7 @@ def forceframe_get_or_create_athlete(athlete_data):
     else:
         # Athlete doesn't exist, insert into athlete table
         new_athlete = {"first_name": first_name, "last_name": last_name, "teamID": athlete_data["teamID"], "position_abbreviation": athlete_data["Position"]}
+        new_athlete = {"first_name": first_name, "last_name": last_name, "teamID": athlete_data["teamID"], "position_abbreviation": athlete_data["Position"]}
         insert_response = supabase.table('Athlete').insert(new_athlete).execute()
 
         return insert_response.data[0]['athleteID']
@@ -85,7 +86,7 @@ def upload_force_frame_csv():
 
         for entry in data:
             # Step 1: Get or create the athlete in the athlete table
-            athlete_id = forceframe_get_or_create_athlete(entry)
+            athlete_id = get_or_create_athlete(entry)
             # Step 2: Prepare the record to insert into the main table
 
             record = {
