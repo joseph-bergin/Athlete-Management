@@ -11,7 +11,7 @@ def get_athletes():
 
 @athete_blueprint.route('/athletes/<int:id>', methods=['GET'])
 def get_athlete_by_id(id):
-    athlete = supabase.table('Athlete').select('*').eq('id', id).execute()
+    athlete = supabase.table('Athlete').select('*').eq('athleteID', id).execute()
     if athlete.data:
         return jsonify(athlete.data[0]), 200
     else:
@@ -26,7 +26,7 @@ def create_athlete():
 @athete_blueprint.route('/athletes/<int:id>', methods=['PUT'])
 def update_athlete(id):
     data = request.get_json()
-    athlete = supabase.table('Athlete').update(data).eq('id', id).execute()
+    athlete = supabase.table('Athlete').update(data).eq('athleteID', id).execute()
     if athlete.data:
         return jsonify(athlete.data[0]), 200
     else:
@@ -34,7 +34,7 @@ def update_athlete(id):
 
 @athete_blueprint.route('/athletes/<int:id>', methods=['DELETE'])
 def delete_athlete(id):
-    athlete = supabase.table('Athlete').delete().eq('id', id).execute()
+    athlete = supabase.table('Athlete').delete().eq('athleteID', id).execute()
     if athlete.data:
         return jsonify({'message': 'Athlete deleted'}), 200
     else:
