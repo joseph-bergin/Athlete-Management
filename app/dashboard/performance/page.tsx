@@ -121,6 +121,19 @@ export default function Performance() {
             setLoading={setLoading}
           />
         </div>
+        <div className="w-full sm:w-auto">
+          <Button variant="outline" className="w-full" onClick={() => document.getElementById('file-upload-force-frame')?.click()}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Force Frame CSV
+          </Button>
+          <input
+            id="file-upload-force-frame"
+            type="file"
+            accept=".csv"
+            onChange={handleForceFrameFileUpload}
+            className="hidden"
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full sm:w-auto">
