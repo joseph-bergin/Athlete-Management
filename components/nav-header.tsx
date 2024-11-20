@@ -11,8 +11,18 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle
 } from "./ui/navigation-menu";
-import React, { useContext } from "react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "./ui/dialog"
+import React, { useContext, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { Input } from "./ui/input"
 import { ModeToggle } from "./theme-mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton"
 import { TeamContext } from "@/providers/team.provider";
@@ -71,21 +81,104 @@ interface TeamSelectorProps {
     selectTeam: (Team: Team) => void;
 };
 
-const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => (
-    <DropdownMenu>
+const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => {
+    const [isDialogOpen, setDialogOpen] = useState(false);
+
+    const [teamName, setTeamName] = useState("");
+
+    const handleCreateTeam = async () => {
+    if (!teamName.trim()) {
+      alert("Team name cannot be empty!");
+      return;
+    }
+
+    const newTeamData = {
+        teamName, 
+        teamOwnerID: 3
+      };
+    
+      try {
+        const response = await fetch("/api/ws/teams", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newTeamData),
+        });
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API Error: ${errorText}`);
+        }
+    
+        const createdTeam = await response.json();
+        alert(`Team "${createdTeam.teamName}" created successfully!`);
+        setDialogOpen(false);
+        setTeamName("");
+       
+      } catch (error) {
+        console.error("Error creating team:", error);
+        alert(`Failed to create team: ${error.message}`);
+      }
+    };
+  
+    return (
+      <DropdownMenu>
         <DropdownMenuTrigger>
-            <Button variant={"outline"}>{!!selectedTeam ? selectedTeam.teamName : 'Select Team'} <ChevronDown className="inline ml-2" /></Button>
+          <Button variant={"outline"}>
+            {!!selectedTeam ? selectedTeam.teamName : "Select Team"}{" "}
+            <ChevronDown className="inline ml-2" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-            <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
-            {teams.map((team) => (
-                    <DropdownMenuItem key={team.teamID} className="hover:cursor-pointer" onClick={() => selectTeam(team)}>{team.teamName}</DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="hover:cursor-pointer"><CirclePlus className="inline mr-2" /> Create Team</DropdownMenuItem>
+          <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
+          {teams.map((team) => (
+            <DropdownMenuItem
+              key={team.teamID}
+              className="hover:cursor-pointer"
+              onClick={() => selectTeam(team)}
+            >
+              {team.teamName}
+            </DropdownMenuItem>
+          ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="hover:cursor-pointer"
+            onClick={() => setDialogOpen(true)}
+          >
+            <CirclePlus className="inline mr-2" /> Create Team
+          </DropdownMenuItem>
         </DropdownMenuContent>
-    </DropdownMenu>
-);
+  
+        {/* Dialog for Create Team */}
+        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Create a New Team</DialogTitle>
+                        <DialogDescription>
+                            Please provide a name for your new team.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <Input
+                            id="teamName"
+                            placeholder="Team Name"
+                            value={teamName}
+                            onChange={(e) => setTeamName(e.target.value)}
+                            className="w-full"
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+                        <Button onClick={handleCreateTeam}>Create</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            
+      </DropdownMenu>
+    );
+  };
+  
 
 export function NavHeader() {
     const { user, error, isLoading } = useUser();
