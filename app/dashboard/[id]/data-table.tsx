@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/table"
 
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -30,6 +29,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { Filter } from "lucide-react"
+import { FilterPanel } from "./filter-panel"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -42,7 +43,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [showFilters, setShowFilters] = useState(false);
 
     const table = useReactTable({
         data,
@@ -60,17 +62,56 @@ export function DataTable<TData, TValue>({
         },
     });
 
+    let dataTable = (
+        <div className="rounded-xl border bg-card shadow">
+            <Table>
+                <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                    </TableHead>
+                                )
+                            })}
+                        </TableRow>
+                    ))}
+                </TableHeader>
+                <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                            >
+                                {row.getVisibleCells().map((cell) => (
+                                    <TableCell key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                No results.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
+    )
+
     return (
-        <div>
+        <div className="w-full box-border flex flex-col">
             <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filter athletes..."
-                    value={(table.getColumn("athleteName")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("athleteName")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -99,50 +140,23 @@ export function DataTable<TData, TValue>({
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <Button
+                    className="ml-2"
+                    variant={"outline"}
+                    onClick={() => setShowFilters(!showFilters)}
+                >
+                    <Filter />
+                </Button>
             </div>
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    )
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+            <div className="w-full max-w-full flex flex-row gap-4 h-fit">
+                <div className="flex-1 overflow-auto">
+                    {dataTable}
+                </div>
+                {showFilters && (
+                    <div className="flex-shrink-0">
+                        <FilterPanel />
+                    </div>
+                )}
             </div>
         </div>
     )
