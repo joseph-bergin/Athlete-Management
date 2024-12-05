@@ -46,7 +46,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 The Flask server will be running on [http://127.0.0.1:5000](http://127.0.0.1:5000) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
 
-In order for the DB to run, you must create the tables using SQL commands and the DB scripts in Athlete-Management/db. 
+In order for the DB to run, you must create the tables using the run_script.sql file in Athlete-Management/db. 
 
 ------------------------*IMPORTANT*------------------------
 
