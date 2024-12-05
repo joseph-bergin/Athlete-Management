@@ -5,7 +5,6 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import PersonalInfo from '../../components/personal-info'
 import ProfileActions from '../../components/profile-actions'
-import { AppUserContext } from '@/providers/app-user.provider'
 
 export interface Profile {
   firstName: string;
