@@ -65,15 +65,15 @@ SUPABASE_KEY='KEY GOES HERE'<br/>
 
 ## Branch Descriptions
 There are multiple branches in our GitHub repository, each containing features that were worked on but not yet finished:
-<br/>
+<br/><br/>
 main: This is the most up-to-date working code that implements all the features previously mentioned in the application. It serves as the stable version of the app.
-<br/>
+<br/><br/>
 performance-table: This branch contains code for implementing a data table to display athlete data. This feature was meant to give users another way to interact with and view the data, but it is not yet fully completed.
-<br/>
+<br/><br/>
 new-team: This branch has code for implementing a "Create Team" button, accessible via a drop-down menu at the top of the screen. When pressed, a dialog box pops up, allowing users to enter a team name. Once the "Create Team" button is clicked, the team is added to the database, and the user's ID is linked to the team, allowing them to view players and import data. Currently, there is a bug preventing users from interacting with the screen after a team is created, which needs to be fixed in the future.
-<br/>
+<br/><br/>
 new-charts: This branch contains code for adding a drop-down menu on the performance analytics page that allows users to select an athlete's position. Once a position is selected, only athletes in that position will appear in the second drop-down menu, streamlining the process of selecting and comparing athletes.
-<br/>
+<br/><br/>
 
 ## Learn More
 
