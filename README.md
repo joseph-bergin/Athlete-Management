@@ -48,7 +48,7 @@ The Flask server will be running on [http://127.0.0.1:5000](http://127.0.0.1:500
 
 In order for the DB to run, you must create the tables using SQL commands and the DB scripts in Athlete-Management/db. 
 
-------------*IMPORTANT*------------*
+------------------------*IMPORTANT*------------------------
 
 You must set up your own .env file that includes your own Auth0 and Supabase credentials. Your .env file should look something like this:
 
@@ -57,7 +57,7 @@ AUTH0_BASE_URL='BASE URL GOES HERE'<br/>
 AUTH0_ISSUER_BASE_URL='ISSUER BASE URL GOES HERE'<br/>
 AUTH0_CLIENT_ID='CLIENT ID GOES HERE'<br/>
 AUTH0_CLIENT_SECRET='CLIENT SECRET KEY GOES HERE'<br/>
-<br/><br/>
+<br/>
 SUPABASE_URL='URL GOES HERE'<br/>
 SUPABASE_KEY='KEY GOES HERE'<br/>
 <br/>
