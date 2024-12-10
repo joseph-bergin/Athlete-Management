@@ -15,12 +15,14 @@ export interface TeamContext {
     selectedTeam: Team | undefined;
     teams: Team[];
     selectTeam: (team: Team) => void;
+    getTeams: () => void;
 }
 
 export const TeamContext = createContext({
     selectedTeam: undefined,
     teams: [],
-    selectTeam: (team: Team) => {}
+    selectTeam: (team: Team) => {},
+    getTeams: () => {},
 } as TeamContext);
 
 export function TeamProvider({ children }: { children: ReactNode }) {
@@ -28,13 +30,19 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     const [teams, setTeams] = useState<Team[]>([]);
     const [selectedTeam, selectTeam] = useState<Team>();
 
-    useEffect(() => {
+    const getTeams = () => {
         if(appUser) {
             axios.get(`/api/ws/teams/owner/${appUser.userID}`).then(response => {
                 setTeams(response.data);
             }).catch(() => {
                 setTeams([]);
             });
+        }
+    };
+
+    useEffect(() => {
+        if(appUser) {
+            getTeams();
 
             let storedTeam = localStorage.getItem('selectedTeam');
             if(storedTeam) {
@@ -54,6 +62,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         selectedTeam,
         selectTeam,
         teams,
+        getTeams
       }}>
         {children}
       </TeamContext.Provider>

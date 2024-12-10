@@ -27,7 +27,9 @@ import { ModeToggle } from "./theme-mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton"
 import { TeamContext } from "@/providers/team.provider";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { ChevronDown, CirclePlus } from "lucide-react";
+import { ChevronDown, CirclePlus, Users } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { AppUserContext } from "@/providers/app-user.provider";
 
 export interface Team {
     teamID: number;
@@ -83,75 +85,86 @@ const Menu = () => (
 
 const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
-
     const [teamName, setTeamName] = useState("");
+    const appUserContext = useContext(AppUserContext);
+    const teamContext = useContext(TeamContext);
 
     const handleCreateTeam = async () => {
-    if (!teamName.trim()) {
-      alert("Team name cannot be empty!");
-      return;
-    }
-
-    const newTeamData = {
-        teamName, 
-        teamOwnerID: 3
-      };
-    
-      try {
-        const response = await fetch("/api/ws/teams", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newTeamData),
-        });
-    
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`API Error: ${errorText}`);
+        if (!teamName.trim()) {
+            toast({
+                title: "Error",
+                description: "Team name cannot be empty!",
+            });
+            return;
         }
+
+        const newTeamData = {
+            teamName, 
+            teamOwnerID: appUserContext.appUser?.userID
+        };
     
-        const createdTeam = await response.json();
-        alert(`Team "${createdTeam.teamName}" created successfully!`);
-        setDialogOpen(false);
-        setTeamName("");
-       
-      } catch (error) {
-        console.error("Error creating team:", error);
-        alert(`Failed to create team: ${error.message}`);
-      }
+        try {
+            const response = await fetch("/api/ws/teams", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newTeamData),
+            });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API Error: ${errorText}`);
+            }
+    
+            const createdTeam = await response.json();
+            toast({
+                title: "Success",
+                description: `Team "${createdTeam.teamName}" created successfully!`,
+            });
+            setDialogOpen(false);
+            setTeamName("");
+            teamContext.getTeams();
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: `Failed to create team`,
+            });
+        }
     };
   
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant={"outline"}>
-            {!!selectedTeam ? selectedTeam.teamName : "Select Team"}{" "}
-            <ChevronDown className="inline ml-2" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
-          {teams.map((team) => (
-            <DropdownMenuItem
-              key={team.teamID}
-              className="hover:cursor-pointer"
-              onClick={() => selectTeam(team)}
-            >
-              {team.teamName}
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="hover:cursor-pointer"
-            onClick={() => setDialogOpen(true)}
-          >
-            <CirclePlus className="inline mr-2" /> Create Team
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-  
-        {/* Dialog for Create Team */}
-        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <div>
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Button variant={"outline"}>
+                        {!!selectedTeam ? selectedTeam.teamName : "Select Team"}{" "}
+                        <ChevronDown className="inline ml-2" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
+                    {teams.map((team) => (
+                        <DropdownMenuItem
+                            key={team.teamID}
+                            className="hover:cursor-pointer"
+                            onClick={() => selectTeam(team)}
+                        >
+                            {team.teamName}
+                        </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        className="hover:cursor-pointer"
+                        onClick={() => setDialogOpen(true)}
+                    >
+                        <CirclePlus className="inline mr-2" /> Create Team
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Dialog for Create Team */}
+            <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Create a New Team</DialogTitle>
@@ -174,10 +187,9 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, select
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            
-      </DropdownMenu>
+        </div>
     );
-  };
+};
   
 
 export function NavHeader() {
