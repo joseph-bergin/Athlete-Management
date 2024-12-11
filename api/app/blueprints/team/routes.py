@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from . import team_blueprint
 from app.db import supabase_client
 
@@ -17,7 +17,7 @@ def get_team_by_id(team_id):
     return jsonify(team), 200
 
 @team_blueprint.route('/teams', methods=['POST'])
-def create_team(request):
+def create_team():
     data = request.json
     response = supabase.table('Team').insert(data).execute()
     team = response.data[0] if response.data else {}
