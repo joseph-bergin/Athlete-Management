@@ -11,93 +11,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { TeamContext } from "@/providers/team.provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-
-export interface ParsedAthleteData {
-  Name: string;
-  "Date": Date;
-  "Total Player Load": number;
-  "Explosive Yardage (Total)": number;
-  "Player Load Per Minute": number;
-  "Total High IMA": number;
-  "Total Distance (y)": number;
-  "Maximum Velocity (mph)": number;
-}
-
-export type ParsedAthleteDataDTO = ParsedAthleteData & { teamID: number | undefined };
-
-export interface ParsedForceFrameAthleteData {
-  Name: string;
-  "Date": Date;
-  "Time": string;
-  "Device": string;
-  "Mode": string;
-  "Test": string;
-  "Direction": string;
-  "Angle": string;
-  "Left Reps": number;
-  "Right Reps": number;
-  "Left Max Force": number;
-  "Right Max Force": number;
-  "Max Imbalance": number;
-  "Left Max Ratio": number;
-  "Right Max Ratio": number;
-  "Left Avg Force": number;
-  "Right Avg Force": number;
-  "Avg Imbalance": number;
-  "Left Avg Ratio": number;
-  "Right Avg Ratio": number;
-  "Left Max Impulse": number;
-  "Right Max Impulse": number;
-  "Impulse Imbalance": number;
-}
-
-export type ParsedForceFrameAthleteDataDTO = ParsedForceFrameAthleteData & { teamID: number | undefined };
-
-export interface Athlete {
-  athleteID: number;
-  teamID: number;
-  first_name: string;
-  last_name: string;
-  year: string;
-  position: string;
-}
-
-export interface CatapultData {
-  athleteID: number;
-  dataDate: Date;
-  totalPlayerLoad: number;
-  explosiveYards: number;
-  playerLoadPerMin: number;
-  totalHighIMA: number;
-  totalDistance: number;
-  maximumVelocity: number;
-}
-
-export interface ForceFrameData {
-  athleteID: number;
-  dataDate: Date;
-  dataTime: string;
-  deviceName: string;
-  mode: string;
-  test: string;
-  direction: string;
-  angle: string;
-  leftReps: number;
-  rightReps: number;
-  leftMaxForce: number;
-  rightMaxForce: number;
-  maxImbalance: number;
-  leftMaxRatio: number;
-  rightMaxRatio: number;
-  leftAvgForce: number;
-  rightAvgForce: number;
-  avgImbalance: number;
-  leftAvgRatio: number;
-  rightAvgRatio: number;
-  leftMaxImpulse: number;
-  rightMaxImpulse: number;
-  impulseImbalance: number;
-}
+import { Athlete, CatapultData, ForceFrameData, ParsedAthleteData, ParsedAthleteDataDTO, ParsedForceFrameAthleteData, ParsedForceFrameAthleteDataDTO } from "./models";
+import CatapultUpload from "./catapult-upload";
+import ForceFrameUpload from "./forceframe-upload";
 
 export default function Performance() {
   const [athletes, setAthletes] = useState<any[]>([]);
@@ -109,7 +25,7 @@ export default function Performance() {
   const { toast } = useToast();
 
   const [forceFrameData, setForcePerformanceData] = useState<ForceFrameData[]>([]);
-  const [forceFrameCsvData, setForceCsvData] = useState<ParsedForceFrameAthleteData[]>([])
+  const [forceFrameCsvData, setForceCsvData] = useState<ParsedForceFrameAthleteData[]>([]);
 
   useEffect(() => {
     if (!!selectedTeam) {
@@ -127,62 +43,6 @@ export default function Performance() {
         .catch(error => console.error('Error fetching performance data:', error));
     }
   }, [selectedAthlete, csvData]);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      console.error("No file selected");
-      return;
-    }
-
-    if(!selectedTeam) {
-      console.error("No team selected");
-      return;
-    }
-
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (evt) => {
-      if (!evt.target || typeof evt.target.result !== 'string') {
-        console.error("File read error");
-        return;
-      }
-
-      const binaryStr = evt.target.result;
-      const workbook = XLSX.read(binaryStr, { type: "binary", cellDates: true });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-
-      const data: ParsedAthleteData[] = XLSX.utils.sheet_to_json<ParsedAthleteData>(sheet, { dateNF: 'd"/"m"/"yyyy' });
-      const dto: ParsedAthleteDataDTO[] = data.map(entry => ({ ...entry, teamID: selectedTeam ? selectedTeam.teamID : undefined }));
-
-      uploadCsvData(dto);
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const uploadCsvData = async (data: ParsedAthleteDataDTO[]) => {
-    try {
-      setLoading(true);
-      const response = await axios.post("/api/ws/upload_csv",
-        data
-      );
-      setLoading(false);
-
-      if (response.status == 201) {
-        console.log("Data uploaded successfully!");
-        setCsvData(data);
-        toast({title: "Data uploaded successfully!", description: "Performance data has been uploaded successfully."});
-      } else {
-        console.error("Failed to upload data.");
-        toast({title: "Failed to upload data.", description: "An error occurred while uploading the performance data.", variant: "destructive"});
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast({title: "Failed to upload data.", description: "An error occurred while uploading the performance data.", variant: "destructive"});
-    }
-  };
 
   const handleForceFrameFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -248,29 +108,17 @@ export default function Performance() {
       <h1 className="text-2xl font-bold mb-8 text-center">Performance Dashboard</h1>
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
         <div className="w-full sm:w-auto">
-          <Button variant="outline" className="w-full" onClick={() => document.getElementById('file-upload')?.click()}>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Catapult CSV
-          </Button>
-          <input
-            id="file-upload"
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="hidden"
+          <CatapultUpload
+            selectedTeam={selectedTeam}
+            setCsvData={setCsvData}
+            setLoading={setLoading}
           />
         </div>
         <div className="w-full sm:w-auto">
-          <Button variant="outline" className="w-full" onClick={() => document.getElementById('file-upload-force-frame')?.click()}>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Force Frame CSV
-          </Button>
-          <input
-            id="file-upload-force-frame"
-            type="file"
-            accept=".csv"
-            onChange={handleForceFrameFileUpload}
-            className="hidden"
+          <ForceFrameUpload 
+            selectedTeam={selectedTeam}
+            setForceCsvData={setForceCsvData}
+            setLoading={setLoading}
           />
         </div>
         <DropdownMenu>
