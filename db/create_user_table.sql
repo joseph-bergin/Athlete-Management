@@ -2,4 +2,5 @@ CREATE TABLE User (
     userID BIGINT PRIMARY KEY,
     firstName VARCHAR(35) NOT NULL,
     lastName VARCHAR(35) NOT NULL
+    authID VARCHAR(128)
 );

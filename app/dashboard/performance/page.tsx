@@ -11,39 +11,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { TeamContext } from "@/providers/team.provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-
-export interface ParsedAthleteData {
-  Name: string;
-  "Date": Date; // Could also be a `Date` type depending on your handling
-  "Total Player Load": number;
-  "Explosive Yardage (Total)": number;
-  "Player Load Per Minute": number;
-  "Total High IMA": number;
-  "Total Distance (y)": number;
-  "Maximum Velocity (mph)": number;
-}
-
-export type ParsedAthleteDataDTO = ParsedAthleteData & { teamID: number | undefined };
-
-export interface Athlete {
-  athleteID: number;
-  teamID: number;
-  first_name: string;
-  last_name: string;
-  year: string;
-  position: string;
-}
-
-export interface CatapultData {
-  athleteID: number;
-  dataDate: Date;
-  totalPlayerLoad: number;
-  explosiveYards: number;
-  playerLoadPerMin: number;
-  totalHighIMA: number;
-  totalDistance: number;
-  maximumVelocity: number;
-}
+import { Athlete, CatapultData, ForceFrameData, ParsedAthleteData, ParsedAthleteDataDTO, ParsedForceFrameAthleteData, ParsedForceFrameAthleteDataDTO } from "./models";
+import CatapultUpload from "./catapult-upload";
+import ForceFrameUpload from "./forceframe-upload";
 
 export default function Performance() {
   const [athletes, setAthletes] = useState<any[]>([]);
@@ -53,6 +23,9 @@ export default function Performance() {
   const [csvData, setCsvData] = useState<ParsedAthleteData[]>([]);
   const { selectedTeam } = useContext(TeamContext);
   const { toast } = useToast();
+
+  const [forceFrameData, setForcePerformanceData] = useState<ForceFrameData[]>([]);
+  const [forceFrameCsvData, setForceCsvData] = useState<ParsedForceFrameAthleteData[]>([]);
 
   useEffect(() => {
     if (!!selectedTeam) {
@@ -71,7 +44,7 @@ export default function Performance() {
     }
   }, [selectedAthlete, csvData]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleForceFrameFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) {
       console.error("No file selected");
       return;
@@ -96,27 +69,27 @@ export default function Performance() {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
 
-      const data: ParsedAthleteData[] = XLSX.utils.sheet_to_json<ParsedAthleteData>(sheet, { dateNF: 'd"/"m"/"yyyy' });
-      const dto: ParsedAthleteDataDTO[] = data.map(entry => ({ ...entry, teamID: selectedTeam ? selectedTeam.teamID : undefined }));
+      const data: ParsedForceFrameAthleteData[] = XLSX.utils.sheet_to_json<ParsedForceFrameAthleteData>(sheet, { dateNF: 'd"/"m"/"yyyy' });
+      const dto: ParsedForceFrameAthleteDataDTO[] = data.map(entry => ({ ...entry, teamID: selectedTeam ? selectedTeam.teamID : undefined }));
 
-      uploadCsvData(dto);
+      uploadForceFrameCsvData(dto);
     };
 
     reader.readAsBinaryString(file);
   };
 
-  const uploadCsvData = async (data: ParsedAthleteDataDTO[]) => {
+  const uploadForceFrameCsvData = async (data: ParsedForceFrameAthleteDataDTO[]) => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/ws/upload_csv",
+      const response = await axios.post("/api/ws/upload_force_frame_csv",
         data
       );
       setLoading(false);
 
       if (response.status == 201) {
         console.log("Data uploaded successfully!");
-        setCsvData(data);
-        toast({title: "Data uploaded successfully!", description: "Performance data has been uploaded successfully."});
+        setForceCsvData(data);
+        toast({title: "Data uploaded successfully!", description: "Performance Force Frame data has been uploaded successfully."});
       } else {
         console.error("Failed to upload data.");
         toast({title: "Failed to upload data.", description: "An error occurred while uploading the performance data.", variant: "destructive"});
@@ -127,6 +100,7 @@ export default function Performance() {
     }
   };
 
+  const sortedForceFramePerformanceData = forceFrameData.sort((a, b) => new Date(a.dataDate).getTime() - new Date(b.dataDate).getTime());
   const sortedPerformanceData = performanceData.sort((a, b) => new Date(a.dataDate).getTime() - new Date(b.dataDate).getTime());
 
   return (
@@ -134,16 +108,17 @@ export default function Performance() {
       <h1 className="text-2xl font-bold mb-8 text-center">Performance Dashboard</h1>
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
         <div className="w-full sm:w-auto">
-          <Button variant="outline" className="w-full" onClick={() => document.getElementById('file-upload')?.click()}>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload CSV
-          </Button>
-          <input
-            id="file-upload"
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="hidden"
+          <CatapultUpload
+            selectedTeam={selectedTeam}
+            setCsvData={setCsvData}
+            setLoading={setLoading}
+          />
+        </div>
+        <div className="w-full sm:w-auto">
+          <ForceFrameUpload 
+            selectedTeam={selectedTeam}
+            setForceCsvData={setForceCsvData}
+            setLoading={setLoading}
           />
         </div>
         <DropdownMenu>

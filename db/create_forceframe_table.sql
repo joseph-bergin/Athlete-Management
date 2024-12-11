@@ -1,0 +1,27 @@
+CREATE TABLE forceframedata (
+    forceFrameDataid BIGINT PRIMARY KEY,               
+    athleteID INT NOT NULL,                     
+    dataDate DATE,   
+    dataTime TIME,       
+    deviceName VARCHAR(100),               
+    mode VARCHAR(50),                   
+    test VARCHAR(100),                  
+    direction VARCHAR(50),               
+    angle VARCHAR(50),                         
+    leftReps INT,                          
+    rightReps INT,                          
+    leftMaxForce FLOAT,                   
+    rightMaxForce FLOAT,                  
+    maxImbalance FLOAT,                 
+    leftMaxRatio FLOAT,                   
+    rightMaxRatio FLOAT,                  
+    leftAvgForce FLOAT,                   
+    rightAvgForce FLOAT,                
+    avgImbalance FLOAT,                 
+    leftAvgRatio FLOAT,                 
+    rightAvgRatio FLOAT,                   
+    leftMaxImpulse FLOAT,                
+    rightMaxImpulse FLOAT,                
+    impulseImbalance FLOAT  
+    FOREIGN KEY (athleteID) REFERENCES Athlete(athleteID)            
+);

@@ -1,7 +1,8 @@
 CREATE TABLE Athlete (
     athleteID BIGINT PRIMARY KEY,
-    userID BIGINT,
     teamID BIGINT,
-    FOREIGN KEY (userID) REFERENCES User(userID),
+    first_name VARCHAR(128)
+    last_name VARCHAR(128)
+    position_abbreviation CHAR(4),
     FOREIGN KEY (teamID) REFERENCES Team(teamID)
 );

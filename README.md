@@ -1,17 +1,9 @@
-<p align="center">
-  <a href="https://nextjs-flask-starter.vercel.app/">
-    <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" height="96">
-    <h3 align="center">Next.js Flask Starter</h3>
-  </a>
-</p>
-
-<p align="center">Simple Next.js boilerplate that uses <a href="https://flask.palletsprojects.com/">Flask</a> as the API backend.</p>
 
 <br/>
 
 ## Introduction
 
-This is a hybrid Next.js + Python app that uses Next.js as the frontend and Flask as the API backend. One great use case of this is to write Next.js apps that use Python AI libraries on the backend.
+This project is a web application designed for managing athlete data, tracking performance, and providing analytics through intuitive visualizations. It integrates with **Auth0** for user authentication and **Flask** for the backend, offering secure access control and real-time performance tracking. The frontend is built using **Next.js**, **Tailwind CSS**, and **React** to provide a seamless user experience.
 
 ## How It Works
 
@@ -19,26 +11,17 @@ The Python/Flask server is mapped into to Next.js app under `/api/`.
 
 This is implemented using [`next.config.js` rewrites](https://github.com/vercel/examples/blob/main/python/nextjs-flask/next.config.js) to map any request to `/api/:path*` to the Flask API, which is hosted in the `/api` folder.
 
-On localhost, the rewrite will be made to the `127.0.0.1:5328` port, which is where the Flask server is running.
+On localhost, the rewrite will be made to the `127.0.0.1:5000` port, which is where the Flask server is running.
 
 In production, the Flask server is hosted as [Python serverless functions](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python) on Vercel.
-
-## Demo
-
-https://nextjs-flask-starter.vercel.app/
-
-## Deploy Your Own
-
-You can clone & deploy it to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-title=Next.js%20Flask%20Starter&demo-description=Simple%20Next.js%20boilerplate%20that%20uses%20Flask%20as%20the%20API%20backend.&demo-url=https%3A%2F%2Fnextjs-flask-starter.vercel.app%2F&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F795TzKM3irWu6KBCUPpPz%2F44e0c6622097b1eea9b48f732bf75d08%2FCleanShot_2023-05-23_at_12.02.15.png&project-name=Next.js%20Flask%20Starter&repository-name=nextjs-flask-starter&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fnextjs-flask&from=vercel-examples-repo)
 
 ## Developing Locally
 
 You can clone & create this repo with the following command
 
 ```bash
-npx create-next-app nextjs-flask --example "https://github.com/vercel/examples/tree/main/python/nextjs-flask"
+git clone https://github.com/joseph-bergin/Athlete-Management.git
+cd Athlete-Management
 ```
 
 ## Getting Started
@@ -48,24 +31,49 @@ First, install the dependencies:
 ```bash
 npm install
 # or
-yarn
-# or
 pnpm install
 ```
 
-Then, run the development server:
+Then, run the development server (this will install more requirements):
 
 ```bash
 npm run dev
-# or
-yarn dev
 # or
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The Flask server will be running on [http://127.0.0.1:5328](http://127.0.0.1:5328) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
+The Flask server will be running on [http://127.0.0.1:5000](http://127.0.0.1:5000) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
+
+In order for the DB to run, you must create the tables using the run_script.sql file in Athlete-Management/db. 
+
+------------------------*IMPORTANT*------------------------
+
+You must set up your own .env file that includes your own Auth0 and Supabase credentials. Your .env file should look something like this:
+
+AUTH0_SECRET='SECRET KEY GOES HERE'<br/>
+AUTH0_BASE_URL='BASE URL GOES HERE'<br/>
+AUTH0_ISSUER_BASE_URL='ISSUER BASE URL GOES HERE'<br/>
+AUTH0_CLIENT_ID='CLIENT ID GOES HERE'<br/>
+AUTH0_CLIENT_SECRET='CLIENT SECRET KEY GOES HERE'<br/>
+<br/>
+SUPABASE_URL='URL GOES HERE'<br/>
+SUPABASE_KEY='KEY GOES HERE'<br/>
+<br/>
+
+
+## Branch Descriptions
+There are multiple branches in our GitHub repository, each containing features that were worked on but not yet finished:
+<br/><br/>
+main: This is the most up-to-date working code that implements all the features previously mentioned in the application. It serves as the stable version of the app.
+<br/><br/>
+performance-table: This branch contains code for implementing a data table to display athlete data. This feature was meant to give users another way to interact with and view the data, but it is not yet fully completed.
+<br/><br/>
+new-team: This branch has code for implementing a "Create Team" button, accessible via a drop-down menu at the top of the screen. When pressed, a dialog box pops up, allowing users to enter a team name. Once the "Create Team" button is clicked, the team is added to the database, and the user's ID is linked to the team, allowing them to view players and import data. Currently, there is a bug preventing users from interacting with the screen after a team is created, which needs to be fixed in the future.
+<br/><br/>
+new-charts: This branch contains code for adding a drop-down menu on the performance analytics page that allows users to select an athlete's position. Once a position is selected, only athletes in that position will appear in the second drop-down menu, streamlining the process of selecting and comparing athletes.
+<br/><br/>
 
 ## Learn More
 
