@@ -12,6 +12,7 @@ import { TeamContext } from '@/providers/team.provider';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ForceFrameData, ForceFrameDataEntry } from './force-frame-data.model';
+import CatapultGraph from './graph';
 
 export default function PerformanceTable() {
     const params = useParams();
@@ -26,6 +27,8 @@ export default function PerformanceTable() {
     const [catapultData, setCatapultData] = useState<CatapultData[]>([]);
     const [forceFrameData, setForceFrameData] = useState<ForceFrameData[]>([]);
     const teamContext = useContext(TeamContext);
+    const [showCatapultTable, setShowCatapultTable] = useState(true);
+    const [showForceFrameTable, setShowForceFrameTable] = useState(true);
 
     useEffect(() => {
         axios.get(`/api/ws/athletes/${params.athleteID}`)
@@ -55,7 +58,7 @@ export default function PerformanceTable() {
     }));
 
     return (
-        <div>
+        <div className="mb-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -82,10 +85,14 @@ export default function PerformanceTable() {
                     <TabsTrigger value="forceframe">ForceFrame</TabsTrigger>
                 </TabsList>
                 <TabsContent value="catapult">
-                    <DataTable columns={catapultColumns} data={formatedCatapultData}></DataTable>
-                </TabsContent>
+                    {
+                        showCatapultTable ?
+                        <DataTable setShowTable={setShowCatapultTable} columns={catapultColumns} data={catapultData}></DataTable> : 
+                        <CatapultGraph data={catapultData} setShowTable={setShowCatapultTable} />
+                    }
+                </TabsContent> 
                 <TabsContent value="forceframe">
-                    <DataTable columns={forceFrameColumns} data={formatedForceFrameData}></DataTable>
+                    <DataTable setShowTable={setShowForceFrameTable} columns={forceFrameColumns} data={formatedForceFrameData}></DataTable>
                 </TabsContent>
             </Tabs>
         </div>

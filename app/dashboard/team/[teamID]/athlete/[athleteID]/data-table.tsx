@@ -30,18 +30,20 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Filter } from "lucide-react"
+import { ChartLine, Filter } from "lucide-react"
 import { FilterPanel } from "./filter-panel"
 import { DataTablePagination } from "@/components/ui/data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+    data: TData[],
+    setShowTable: (value: boolean) => void
 }
 
 export function DataTable<TData, TValue>({
     columns,
-    data
+    data,
+    setShowTable
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -120,6 +122,9 @@ export function DataTable<TData, TValue>({
     return (
         <div className="w-full box-border flex flex-col">
             <div className="flex items-center py-4">
+                <Button variant="outline" size="icon" onClick={() => setShowTable(false)}>
+                    <ChartLine />
+                </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -168,5 +173,5 @@ export function DataTable<TData, TValue>({
                 )}
             </div>
         </div>
-    )
+    );
 }
