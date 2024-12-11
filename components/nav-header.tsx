@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import React, { useContext, useState } from 'react';
 import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle
-} from "./ui/navigation-menu";
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "./ui/dialog"
-import React, { useContext, useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import { Input } from "./ui/input"
-import { ModeToggle } from "./theme-mode-toggle";
-import { Skeleton } from "@/components/ui/skeleton"
-import { TeamContext } from "@/providers/team.provider";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { ChevronDown, CirclePlus, Users } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { AppUserContext } from "@/providers/app-user.provider";
+} from './ui/dialog';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
+import { TeamContext } from '@/providers/team.provider';
+import { AppUserContext } from '@/providers/app-user.provider';
+import { ChevronDown, CirclePlus } from 'lucide-react';
+import { ModeToggle } from './theme-mode-toggle';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from './ui/navigation-menu';
+import { cn } from '@/lib/utils';
 
 export interface Team {
     teamID: number;
@@ -41,7 +41,7 @@ const NavigationTitle = () => (
     <div>
         <p className="font-bold">Athlete Management System</p>
     </div>
-)
+);
 
 const LoginButton = () => (
     <Button asChild size={'sm'}>
@@ -77,94 +77,102 @@ const Menu = () => (
     </div>
 )
 
-// interface TeamSelectorProps {
-//     teams: Team[];
-//     selectedTeam: Team | undefined;
-//     selectTeam: (Team: Team) => void;
-// };
+interface TeamSelectorProps {
+    teams: Team[];
+    selectedTeam: Team | undefined;
+    selectTeam: (team: Team) => void;
+}
 
 const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => {
     const [isDialogOpen, setDialogOpen] = useState(false);
-    const [teamName, setTeamName] = useState("");
+    const [teamName, setTeamName] = useState('');
     const appUserContext = useContext(AppUserContext);
     const teamContext = useContext(TeamContext);
 
     const handleCreateTeam = async () => {
         if (!teamName.trim()) {
             toast({
-                title: "Error",
-                description: "Team name cannot be empty!",
+                title: 'Error',
+                description: 'Team name cannot be empty!',
             });
             return;
         }
 
         const newTeamData = {
-            teamName, 
-            teamOwnerID: appUserContext.appUser?.userID
+            teamName,
+            teamOwnerID: appUserContext.appUser?.userID,
         };
-    
+
         try {
-            const response = await fetch("/api/ws/teams", {
-                method: "POST",
+            const response = await fetch('/api/ws/teams', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newTeamData),
             });
-    
+
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`API Error: ${errorText}`);
             }
-    
+
             const createdTeam = await response.json();
             toast({
-                title: "Success",
+                title: 'Success',
                 description: `Team "${createdTeam.teamName}" created successfully!`,
             });
-            setDialogOpen(false);
-            setTeamName("");
-            teamContext.getTeams();
+
+            await teamContext.getTeams();
+            teamContext.selectTeam(createdTeam);
+
+            setTeamName(''); // Clear input field
         } catch (error) {
+            console.error('Create Team Error:', error);
             toast({
-                title: "Error",
-                description: `Failed to create team`,
+                title: 'Error',
+                description: 'Failed to create team',
             });
         }
     };
-  
+
     return (
         <div>
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <Button variant={"outline"}>
-                        {!!selectedTeam ? selectedTeam.teamName : "Select Team"}{" "}
-                        <ChevronDown className="inline ml-2" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
-                    {teams.map((team) => (
-                        <DropdownMenuItem
-                            key={team.teamID}
-                            className="hover:cursor-pointer"
-                            onClick={() => selectTeam(team)}
-                        >
-                            {team.teamName}
-                        </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        className="hover:cursor-pointer"
-                        onClick={() => setDialogOpen(true)}
-                    >
-                        <CirclePlus className="inline mr-2" /> Create Team
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Dialog for Create Team */}
-            <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog>
+                {teams.length > 0 ? (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="outline">
+                                {selectedTeam ? selectedTeam.teamName : 'Select Team'}{' '}
+                                <ChevronDown className="inline ml-2" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
+                            {teams.map((team) => (
+                                <DropdownMenuItem
+                                    key={team.teamID}
+                                    className="hover:cursor-pointer"
+                                    onClick={() => selectTeam(team)}
+                                >
+                                    {team.teamName}
+                                </DropdownMenuItem>
+                            ))}
+                            <DropdownMenuSeparator />
+                            <DialogTrigger>
+                                <DropdownMenuItem
+                                    className="hover:cursor-pointer"
+                                >
+                                    <CirclePlus className="inline mr-2" /> Create Team
+                                </DropdownMenuItem>
+                            </DialogTrigger>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                ) : (
+                    <div className="text-sm text-muted-foreground">
+                        No teams available. Please create a new team.
+                    </div>
+                )}
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Create a New Team</DialogTitle>
@@ -182,57 +190,60 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, select
                         />
                     </div>
                     <DialogFooter>
-                        <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleCreateTeam}>Create</Button>
+                        <DialogClose asChild>
+                            <Button>Cancel</Button> 
+                        </DialogClose>
+                        <DialogClose asChild>
+                            <Button onClick={handleCreateTeam}>Create</Button>
+                        </DialogClose>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>
     );
 };
-  
 
 export function NavHeader() {
-    const { user, error, isLoading } = useUser();
-    
-    if(isLoading) {
+    const teamContext = useContext(TeamContext);
+    const { user, isLoading } = useUser();
+
+    if (isLoading) {
         return (
             <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
-                <NavigationTitle></NavigationTitle>
-
-                <Skeleton className="col-span-2 h-8 w-8/12"></Skeleton>
+                <NavigationTitle />
+                <Skeleton className="col-span-2 h-8 w-8/12" />
             </div>
-        )
+        );
     }
 
-    if(user) {
+    if (user) {
         return (
-            <>
-                <div className="grid grid-cols-2 grid-rows-1 py-4 justify-items-center items-center z-50">
-                    <NavigationTitle></NavigationTitle>
-    
-                    {/* <TeamSelector teams={teamContext.teams} selectedTeam={teamContext.selectedTeam} selectTeam={teamContext.selectTeam}></TeamSelector> */}
-    
-                    <div className="flex items-center gap-2">
-                        <Menu></Menu>
-                        <ModeToggle></ModeToggle>
-                    </div>
+            <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
+                <NavigationTitle />
+
+                <TeamSelector
+                    teams={teamContext.teams}
+                    selectedTeam={teamContext.selectedTeam}
+                    selectTeam={teamContext.selectTeam}
+                />
+
+                <div className="flex items-center gap-2">
+                    <Menu />
+                    <ModeToggle />
                 </div>
-            </>
-        )
+            </div>
+        );
     } else {
         return (
-            <>
-                <div className="grid grid-cols-2 grid-rows-1 py-4 justify-items-center items-center z-50">
-                    <NavigationTitle></NavigationTitle>
-                    <div></div>
-                    <div className="flex items-center gap-2">
-                        <LoginButton></LoginButton>
-                        <ModeToggle></ModeToggle>
-                    </div>
+            <div className="grid grid-cols-3 grid-rows-1 py-4 justify-items-center items-center z-50">
+                <NavigationTitle />
+                <div />
+                <div className="flex items-center gap-2">
+                    <LoginButton />
+                    <ModeToggle />
                 </div>
-            </>
-        )
+            </div>
+        );
     }
 }
 
