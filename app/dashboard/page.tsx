@@ -25,6 +25,10 @@ export default function Dashboard() {
     const appUserContext = useContext(AppUserContext);
     const teamContext = useContext(TeamContext);
 
+    if (!user || !teamContext.teams) {
+        return null; // Render nothing until contexts are available
+    }
+
     const handleCreateTeam = async () => {
         if (!teamName.trim()) {
             toast({
@@ -103,11 +107,11 @@ export default function Dashboard() {
                             />
                         </div>
                         <DialogFooter>
-                            <DialogClose asChild>
+                            <DialogClose>
                                 <Button>Cancel</Button>
                             </DialogClose>
-                            <DialogClose asChild>
-                                <Button onClick={handleCreateTeam}>Create</Button>
+                            <DialogClose onClick={handleCreateTeam}>
+                                <Button>Create</Button>
                             </DialogClose>
                         </DialogFooter>
                     </DialogContent>
@@ -115,7 +119,7 @@ export default function Dashboard() {
             </div>
             {
                 teamContext.teams.map(team => (
-                    <Link href={'/dashboard/team/' + team.teamID}>
+                    <Link key={team.teamID} href={'/dashboard/team/' + team.teamID}>
                         <Card className="mb-4 hover:shadow-lg cursor-pointer transition-shadow duration-200">
                             <CardHeader>
                                 <CardTitle className="flex justify-between">

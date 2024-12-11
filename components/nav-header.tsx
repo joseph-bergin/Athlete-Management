@@ -32,13 +32,9 @@ const Menu = () => (
         <NavigationMenu>
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <NavigationMenuTrigger>Team Tools</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid gap-3 p-4 md:w-[200px] lg:w-[300px]">
-                            <ListItem title="Team Manager" children="View and manage your team." href="/dashboard/team"></ListItem>
-                            <ListItem title="Performance Analytics" children="Tools to help track athlete performance." href="/dashboard/performance"></ListItem>
-                        </ul>
-                    </NavigationMenuContent>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                        <a href="/dashboard">Dashboard</a>
+                    </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>

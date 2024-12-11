@@ -1,25 +1,12 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CatapultDataEntry } from './catapult-data.model';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
+import { ForceFrameData, ForceFrameDataEntry } from './force-frame-data.model';
+import { CatapultData } from '@/app/dashboard/performance/models';
 
-export const columns: ColumnDef<CatapultDataEntry>[] = [
-    {
-        accessorKey: 'athleteName',
-        header: ({column}) => {
-            return (
-                <Button
-                variant={'ghost'}
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Athlete
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
+export const catapultColumns: ColumnDef<CatapultData>[] = [
     {
         accessorKey: 'dataDate',
         header: ({column}) => {
@@ -118,4 +105,81 @@ export const columns: ColumnDef<CatapultDataEntry>[] = [
             )
         },
     }
+]
+
+// Average of L Avg Force (N)	Average of R Avg Force (N)	Average of Avg Imbalance
+// leftAvgForce: number;
+// rightAvgForce: number;
+// avgImbalance: number;
+export const forceFrameColumns: ColumnDef<ForceFrameDataEntry>[] = [
+    {
+        accessorKey: 'test',
+        header: ({column}) => {
+            return (
+                <Button
+                variant={'ghost'}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Test Type
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: 'dataDate',
+        header: ({column}) => {
+            return (
+                <Button
+                variant={'ghost'}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Date
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: 'leftAvgForce',
+        header: ({column}) => {
+            return (
+                <Button
+                variant={'ghost'}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Left Average Force (N)
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: 'rightAvgForce',
+        header: ({column}) => {
+            return (
+                <Button
+                variant={'ghost'}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Right Average Force (N)
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: 'avgImbalance',
+        header: ({column}) => {
+            return (
+                <Button
+                variant={'ghost'}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Average Imbalance
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
 ]

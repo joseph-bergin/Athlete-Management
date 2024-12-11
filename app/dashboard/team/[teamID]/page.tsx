@@ -6,9 +6,8 @@ import { useContext, useEffect, useState } from "react";
 import { TeamDataTable } from "./data-table";
 import { columns } from "./columns";
 import axios from "axios";
-import { Athlete, AthleteDataEntry } from "./catapult-data.model";
+import { Athlete, AthleteDataEntry } from "./athlete-data.model";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import { Separator } from "@/components/ui/separator";
 
 export default function Team() {

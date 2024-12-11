@@ -1,7 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation';
-import { columns } from './columns';
+import { catapultColumns, forceFrameColumns } from './columns';
 import { DataTable } from './data-table';
 import { Athlete, CatapultData } from './catapult-data.model';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,8 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { useContext } from 'react';
 import { TeamContext } from '@/providers/team.provider';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ForceFrameData, ForceFrameDataEntry } from './force-frame-data.model';
 
 export default function PerformanceTable() {
     const params = useParams();
@@ -21,7 +23,8 @@ export default function PerformanceTable() {
     }
 
     const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
-    const [performanceData, setPerformanceData] = useState([]);
+    const [catapultData, setCatapultData] = useState<CatapultData[]>([]);
+    const [forceFrameData, setForceFrameData] = useState<ForceFrameData[]>([]);
     const teamContext = useContext(TeamContext);
 
     useEffect(() => {
@@ -33,14 +36,22 @@ export default function PerformanceTable() {
     useEffect(() => {
         if (!!selectedAthlete) {
             axios.get(`/api/ws/catapult_data/athlete/${selectedAthlete.athleteID}`)
-                .then(response => setPerformanceData(response.data))
+                .then(response => setCatapultData(response.data))
+                .catch(error => console.error('Error fetching performance data:', error));
+
+            axios.get(`/api/ws/force_frame_data/athlete/${selectedAthlete.athleteID}`)
+                .then(response => setForceFrameData(response.data))
                 .catch(error => console.error('Error fetching performance data:', error));
         }
     }, [selectedAthlete]);
 
-    const data = performanceData.map((entry: CatapultData) => ({
+    const formatedCatapultData = catapultData.map((entry: CatapultData) => ({
         ...entry,
         athleteName: `${selectedAthlete?.first_name} ${selectedAthlete?.last_name}`
+    }));
+
+    const formatedForceFrameData: ForceFrameDataEntry[] = forceFrameData.map((entry: ForceFrameData) => ({
+        ...entry,
     }));
 
     return (
@@ -65,7 +76,18 @@ export default function PerformanceTable() {
 
             <Separator className="my-2" />
 
-            <DataTable columns={columns} data={data}></DataTable>
+            <Tabs defaultValue="catapult" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="catapult">Catapult</TabsTrigger>
+                    <TabsTrigger value="forceframe">ForceFrame</TabsTrigger>
+                </TabsList>
+                <TabsContent value="catapult">
+                    <DataTable columns={catapultColumns} data={formatedCatapultData}></DataTable>
+                </TabsContent>
+                <TabsContent value="forceframe">
+                    <DataTable columns={forceFrameColumns} data={formatedForceFrameData}></DataTable>
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

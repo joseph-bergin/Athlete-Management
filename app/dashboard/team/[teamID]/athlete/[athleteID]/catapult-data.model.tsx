@@ -17,16 +17,4 @@ export interface Athlete {
     last_name: string;
     year: string;
     position: string;
-  }
-
-export interface CatapultDataEntry {
-    athleteID: number;
-    athleteName: string;
-    dataDate: Date;
-    totalPlayerLoad: number;
-    explosiveYards: number;
-    playerLoadPerMin: number;
-    totalHighIMA: number;
-    totalDistance: number;
-    maximumVelocity: number;
 }

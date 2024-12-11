@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table';
-import { AthleteDataEntry } from './catapult-data.model';
+import { AthleteDataEntry } from './athlete-data.model';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 
