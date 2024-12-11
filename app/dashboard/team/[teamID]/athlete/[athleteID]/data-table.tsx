@@ -31,14 +31,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Filter } from "lucide-react"
 import { FilterPanel } from "./filter-panel"
-import { useRouter } from "next/navigation"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
 
-export function TeamDataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
     columns,
     data
 }: DataTableProps<TData, TValue>) {
@@ -46,7 +45,6 @@ export function TeamDataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [showFilters, setShowFilters] = useState(false);
-    const router = useRouter();
 
     const table = useReactTable({
         data,
@@ -91,8 +89,6 @@ export function TeamDataTable<TData, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className="cursor-pointer"
-                                onClick={() => {router?.push(`/dashboard/athlete/${row.getValue('athleteID')}`)}}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
@@ -147,6 +143,7 @@ export function TeamDataTable<TData, TValue>({
                 <Button
                     className="ml-2"
                     variant={"outline"}
+                    size={"icon"}
                     onClick={() => setShowFilters(!showFilters)}
                 >
                     <Filter />

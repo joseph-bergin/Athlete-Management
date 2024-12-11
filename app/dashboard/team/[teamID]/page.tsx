@@ -7,15 +7,15 @@ import { TeamDataTable } from "./data-table";
 import { columns } from "./columns";
 import axios from "axios";
 import { Athlete, AthleteDataEntry } from "./catapult-data.model";
-import { set } from "date-fns";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 export default function Team() {
     const params = useParams();
     const teamContext = useContext(TeamContext);
 
-    const selectedTeam = teamContext.teams.find(team => team.teamID === parseInt(params.id));
+    const selectedTeam = teamContext.teams.find(team => team.teamID === parseInt(params.teamID));
 
-    if(!selectedTeam) {
+    if (!selectedTeam) {
         return <div>Team not found.</div>
     }
 
@@ -26,7 +26,7 @@ export default function Team() {
     useEffect(() => {
         axios.get(`/api/ws/teams/${selectedTeam.teamID}/athletes`).then(response => {
             setAthletes(response.data);
-        }).catch(error => {});
+        }).catch(error => { });
     }, [selectedTeam]);
 
     const data: AthleteDataEntry[] = athletes.map((athlete: Athlete) => ({
@@ -38,12 +38,25 @@ export default function Team() {
     }));
 
     return (
-        <div>
+        <div className="mb-4">
+
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>{teamContext.selectedTeam ? teamContext.selectedTeam.teamName : "Your team"}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+
             <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">{teamContext.selectedTeam?.teamName}</h1>
 
             <TeamDataTable columns={columns} data={data}></TeamDataTable>
 
-            <div>
+            {/* <div>
                 <p>2. Create Athlete Form (Opens in a sheet).</p>
                 <div className="px-8">
                     <p>Fields: Athlete Name, Position, Year</p>
@@ -64,7 +77,7 @@ export default function Team() {
             </div>
             <div>
                 <p>Import Athletes from .xlsx or .csv Files (SheetJS)</p>
-            </div>
+            </div> */}
         </div>
     )
 }

@@ -1,30 +1,13 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle
-} from "./ui/navigation-menu";
-import React, { useContext } from "react";
+import { cn } from "@/lib/utils";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink } from "./ui/navigation-menu";
+import React from "react";
+import { Button } from "./ui/button";
 import { ModeToggle } from "./theme-mode-toggle";
-import { Skeleton } from "@/components/ui/skeleton"
-import { TeamContext } from "@/providers/team.provider";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { ChevronDown, CirclePlus } from "lucide-react";
+import { navigationMenuTriggerStyle } from "./ui/navigation-menu";
+import { Skeleton } from "./ui/skeleton";
 
 export interface Team {
     teamID: number;
@@ -70,29 +53,7 @@ const Menu = () => (
             </NavigationMenuList>
         </NavigationMenu>
     </div>
-)
-
-// interface TeamSelectorProps {
-//     teams: Team[];
-//     selectedTeam: Team | undefined;
-//     selectTeam: (Team: Team) => void;
-// };
-
-// const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, selectTeam }) => (
-//     <DropdownMenu>
-//         <DropdownMenuTrigger>
-//             <Button variant={"outline"}>{!!selectedTeam ? selectedTeam.teamName : 'Select Team'} <ChevronDown className="inline ml-2" /></Button>
-//         </DropdownMenuTrigger>
-//         <DropdownMenuContent>
-//             <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
-//             {teams.map((team) => (
-//                     <DropdownMenuItem key={team.teamID} className="hover:cursor-pointer" onClick={() => selectTeam(team)}>{team.teamName}</DropdownMenuItem>
-//             ))}
-//             <DropdownMenuSeparator />
-//             <DropdownMenuItem className="hover:cursor-pointer"><CirclePlus className="inline mr-2" /> Create Team</DropdownMenuItem>
-//         </DropdownMenuContent>
-//     </DropdownMenu>
-// );
+);
 
 export function NavHeader() {
     const { user, error, isLoading } = useUser();
@@ -119,7 +80,7 @@ export function NavHeader() {
                         <ModeToggle></ModeToggle>
                     </div>
                 </div>
-            </div>
+            </>
         );
     } else {
         return (
@@ -132,7 +93,7 @@ export function NavHeader() {
                         <ModeToggle></ModeToggle>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

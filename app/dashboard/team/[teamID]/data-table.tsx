@@ -21,7 +21,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import { useState } from "react"
+import { Context, useState } from "react"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -31,13 +31,16 @@ import {
 import { Button } from "@/components/ui/button"
 import { Filter } from "lucide-react"
 import { FilterPanel } from "./filter-panel"
+import { useRouter } from "next/navigation"
+import { TeamContext } from "@/providers/team.provider"
+import { useContext } from "react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function TeamDataTable<TData, TValue>({
     columns,
     data
 }: DataTableProps<TData, TValue>) {
@@ -45,6 +48,8 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [showFilters, setShowFilters] = useState(false);
+    const teamContext = useContext(TeamContext);
+    const router = useRouter();
 
     const table = useReactTable({
         data,
@@ -89,6 +94,8 @@ export function DataTable<TData, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
+                                className="cursor-pointer"
+                                onClick={() => {router?.push(`/dashboard/team/${teamContext.selectedTeam?.teamID}/athlete/${row.getValue('athleteID')}`)}}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
@@ -143,6 +150,7 @@ export function DataTable<TData, TValue>({
                 <Button
                     className="ml-2"
                     variant={"outline"}
+                    size={"icon"}
                     onClick={() => setShowFilters(!showFilters)}
                 >
                     <Filter />
