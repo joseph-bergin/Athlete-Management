@@ -85,7 +85,6 @@ export function NavHeader() {
             <>
                 <div className="grid grid-cols-2 grid-rows-1 py-4 justify-items-center items-center z-50">
                     <NavigationTitle></NavigationTitle>
-                    <div></div>
                     <div className="flex items-center gap-2">
                         <LoginButton></LoginButton>
                         <ModeToggle></ModeToggle>
