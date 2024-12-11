@@ -11,7 +11,23 @@ def split_name(full_name):
     last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
     return first_name, last_name
 
-def get_or_create_athlete(athlete_data):
+def catapult_get_or_create_athlete(athlete_data):
+    # Step 1: Split the full name into first_name and last_name
+    first_name, last_name = split_name(athlete_data.get("Name"))
+
+    # Step 2: Check if the athlete exists in the athlete table
+    response = supabase.table('Athlete').select('*').eq('first_name', first_name).eq('last_name', last_name).eq('teamID', athlete_data["teamID"]).execute()
+    if response.data:
+        # Athlete exists, return athleteId
+        return response.data[0]['athleteID']
+    else:
+        # Athlete doesn't exist, insert into athlete table
+        new_athlete = {"first_name": first_name, "last_name": last_name, "teamID": athlete_data["teamID"], "position_abbreviation": athlete_data["Position Name"]}
+        insert_response = supabase.table('Athlete').insert(new_athlete).execute()
+
+        return insert_response.data[0]['athleteID']
+
+def forceframe_get_or_create_athlete(athlete_data):
     # Step 1: Split the full name into first_name and last_name
     first_name, last_name = split_name(athlete_data.get("Name"))
 
@@ -37,7 +53,7 @@ def upload_csv():
 
         for entry in data:
             # Step 1: Get or create the athlete in the athlete table
-            athlete_id = get_or_create_athlete(entry)
+            athlete_id = catapult_get_or_create_athlete(entry)
             # Step 2: Prepare the record to insert into the main table
 
             # There is an extra space in the excel file for Total High IMA
@@ -69,7 +85,7 @@ def upload_force_frame_csv():
 
         for entry in data:
             # Step 1: Get or create the athlete in the athlete table
-            athlete_id = get_or_create_athlete(entry)
+            athlete_id = forceframe_get_or_create_athlete(entry)
             # Step 2: Prepare the record to insert into the main table
 
             record = {
