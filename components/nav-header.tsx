@@ -2,12 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink } from "./ui/navigation-menu";
+import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "./ui/navigation-menu";
 import React from "react";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./theme-mode-toggle";
 import { navigationMenuTriggerStyle } from "./ui/navigation-menu";
 import { Skeleton } from "./ui/skeleton";
+import UploadSheet from "./upload-sheet";
 
 export interface Team {
     teamID: number;
@@ -73,6 +74,7 @@ export function NavHeader() {
     
                     <div className="flex items-center gap-2">
                         <Menu></Menu>
+                        <UploadSheet />
                         <ModeToggle></ModeToggle>
                     </div>
                 </div>
