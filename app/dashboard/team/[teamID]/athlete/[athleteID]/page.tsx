@@ -9,6 +9,7 @@ import axios from 'axios';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { useContext } from 'react';
 import { TeamContext } from '@/providers/team.provider';
+import { Separator } from '@/components/ui/separator';
 
 export default function PerformanceTable() {
     const params = useParams();
@@ -61,6 +62,9 @@ export default function PerformanceTable() {
             </Breadcrumb>
 
             <h1 className='text-3xl font-extrabold tracking-tight lg:text-4xl'>{selectedAthlete?.first_name} {selectedAthlete?.last_name}</h1>
+
+            <Separator className="my-2" />
+
             <DataTable columns={columns} data={data}></DataTable>
         </div>
     )

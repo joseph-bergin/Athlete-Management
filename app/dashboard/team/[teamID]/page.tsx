@@ -8,6 +8,8 @@ import { columns } from "./columns";
 import axios from "axios";
 import { Athlete, AthleteDataEntry } from "./catapult-data.model";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { DataTablePagination } from "@/components/ui/data-table-pagination";
+import { Separator } from "@/components/ui/separator";
 
 export default function Team() {
     const params = useParams();
@@ -54,6 +56,8 @@ export default function Team() {
 
             <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">{teamContext.selectedTeam?.teamName}</h1>
 
+            <Separator className="my-2" />
+            
             <TeamDataTable columns={columns} data={data}></TeamDataTable>
 
             {/* <div>
