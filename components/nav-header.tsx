@@ -139,40 +139,35 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, select
     return (
         <div>
             <Dialog>
-                {teams.length > 0 ? (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <Button variant="outline">
-                                {selectedTeam ? selectedTeam.teamName : 'Select Team'}{' '}
-                                <ChevronDown className="inline ml-2" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
-                            {teams.map((team) => (
-                                <DropdownMenuItem
-                                    key={team.teamID}
-                                    className="hover:cursor-pointer"
-                                    onClick={() => selectTeam(team)}
-                                >
-                                    {team.teamName}
-                                </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuSeparator />
-                            <DialogTrigger>
-                                <DropdownMenuItem
-                                    className="hover:cursor-pointer"
-                                >
-                                    <CirclePlus className="inline mr-2" /> Create Team
-                                </DropdownMenuItem>
-                            </DialogTrigger>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                ) : (
-                    <div className="text-sm text-muted-foreground">
-                        No teams available. Please create a new team.
-                    </div>
-                )}
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Button variant="outline">
+                            {selectedTeam ? selectedTeam.teamName : 'Select Team'}{' '}
+                            <ChevronDown className="inline ml-2" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Your Teams</DropdownMenuLabel>
+                        {teams.map((team) => (
+                            <DropdownMenuItem
+                                key={team.teamID}
+                                className="hover:cursor-pointer"
+                                onClick={() => selectTeam(team)}
+                            >
+                                {team.teamName}
+                            </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuSeparator />
+                        <DialogTrigger>
+                            <DropdownMenuItem
+                                className="hover:cursor-pointer"
+                            >
+                                <CirclePlus className="inline mr-2" /> Create Team
+                            </DropdownMenuItem>
+                        </DialogTrigger>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>Create a New Team</DialogTitle>
@@ -191,7 +186,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeam, select
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button>Cancel</Button> 
+                            <Button>Cancel</Button>
                         </DialogClose>
                         <DialogClose asChild>
                             <Button onClick={handleCreateTeam}>Create</Button>
